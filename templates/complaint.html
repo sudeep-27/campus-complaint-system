@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Submit Complaint | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+<div id="toastContainer" class="toast-container-custom"></div>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-icon-box">🏫</div>
+    <div class="sidebar-brand-text"><span class="brand-name">CampusVoice</span><span class="brand-sub">Student Portal</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <p class="sidebar-section-title">Main Menu</p>
+    <a href="/dashboard"   class="nav-item-custom"><div class="nav-item-icon">🏠</div><span class="sidebar-label">Dashboard</span></a>
+    <a href="/complaint"   class="nav-item-custom active"><div class="nav-item-icon">📝</div><span class="sidebar-label">New Complaint</span></a>
+    <a href="/tracking"    class="nav-item-custom"><div class="nav-item-icon">📡</div><span class="sidebar-label">Track Complaints</span></a>
+    <a href="/notifications" class="nav-item-custom"><div class="nav-item-icon">🔔</div><span class="sidebar-label">Notifications</span></a>
+    <p class="sidebar-section-title">Account</p>
+    <a href="/profile"     class="nav-item-custom"><div class="nav-item-icon">👤</div><span class="sidebar-label">My Profile</span></a>
+    <a href="/about"       class="nav-item-custom"><div class="nav-item-icon">ℹ️</div><span class="sidebar-label">Help &amp; Support</span></a>
+    <a href="{{ url_for('logout') }}" class="nav-item-custom" style="color:#f87171 !important;">
+      <div class="nav-item-icon" style="background:rgba(239,68,68,0.15);">🚪</div>
+      <span class="sidebar-label">Logout</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-avatar">{{ session.full_name[:2] | upper }}</div>
+    <div class="sidebar-user-info"><div class="user-name">{{ session.full_name }}</div><div class="user-role">{{ session.roll_number or 'Student' }}</div></div>
+    <a href="{{ url_for('logout') }}" class="sidebar-logout"><i class="bi bi-box-arrow-right"></i></a>
+  </div>
+</aside>
+<button id="sidebarToggle" class="sidebar-toggle"><i class="bi bi-chevron-left"></i></button>
+
+<!-- Main Content -->
+<div id="mainContent" class="main-content">
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <button class="mobile-menu-btn"><i class="bi bi-list"></i></button>
+      <div class="page-title-area">
+        <h1 class="page-title">Submit Complaint</h1>
+        <div class="page-breadcrumb"><span>Dashboard</span><span class="breadcrumb-separator">›</span><span>New Complaint</span></div>
+      </div>
+    </div>
+    <div class="dash-navbar-right">
+      <button class="theme-toggle icon-btn"><span class="theme-icon">🌙</span></button>
+      <a href="/notifications" class="icon-btn"><i class="bi bi-bell-fill"></i><span class="notif-dot"></span></a>
+      <div class="dash-profile" onclick="window.location='/profile'">
+        <div class="dash-avatar">{{ session.full_name[:2] | upper }}</div>
+        <div class="dash-profile-info"><div class="profile-name">{{ session.full_name }}</div><div class="profile-role">{{ session.role | capitalize }}</div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-body">
+    <div class="row justify-content-center">
+      <div class="col-xl-9">
+
+        <!-- Form Card -->
+        <div class="complaint-form-card">
+          <!-- Header -->
+          <div class="complaint-form-header">
+            <div class="d-flex align-items-center gap-3">
+              <div style="width:52px;height:52px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:1px solid rgba(255,255,255,0.2);">📝</div>
+              <div>
+                <h2 style="color:#fff;font-size:1.3rem;font-weight:800;margin:0;">File a New Complaint</h2>
+                <p style="color:rgba(255,255,255,0.65);font-size:0.85rem;margin:0;">All complaints are reviewed and addressed within 24–72 hours</p>
+              </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="form-step-indicator">
+              <div class="step-indicator active">
+                <div class="step-circle">1</div>
+                <div class="step-label">Category</div>
+              </div>
+              <div class="step-indicator">
+                <div class="step-circle">2</div>
+                <div class="step-label">Details</div>
+              </div>
+              <div class="step-indicator">
+                <div class="step-circle">3</div>
+                <div class="step-label">Priority</div>
+              </div>
+              <div class="step-indicator">
+                <div class="step-circle">4</div>
+                <div class="step-label">Submit</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Body -->
+          <div class="card-body-custom p-4">
+            <form id="submitComplaintForm">
+
+              <div class="row g-4">
+                <!-- Category -->
+                <div class="col-md-6">
+                  <label class="form-label-custom" for="category">Complaint Category *</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-grid-fill"></i></span>
+                    <select id="category" name="cat_id" class="form-control-custom" required style="padding-left:2.75rem;cursor:pointer;" onchange="updateDept()">
+                      <option value="">— Select Category —</option>
+                      <optgroup label="IT &amp; Infrastructure">
+                        <option value="1" data-dept="IT &amp; Infrastructure">Network / WiFi Issue</option>
+                        <option value="2" data-dept="IT &amp; Infrastructure">Software / System Issue</option>
+                      </optgroup>
+                      <optgroup label="Academic Affairs">
+                        <option value="3" data-dept="Academic Affairs">Exam Scheduling</option>
+                        <option value="4" data-dept="Academic Affairs">Faculty Concern</option>
+                      </optgroup>
+                      <optgroup label="Hostel &amp; Facilities">
+                        <option value="5" data-dept="Hostel &amp; Facilities">Hostel Maintenance</option>
+                        <option value="6" data-dept="Hostel &amp; Facilities">Hostel Food Quality</option>
+                      </optgroup>
+                      <optgroup label="Library">
+                        <option value="7" data-dept="Library">Library Book Availability</option>
+                        <option value="8" data-dept="Library">Library Silence Violation</option>
+                      </optgroup>
+                      <optgroup label="Sports &amp; Recreation">
+                        <option value="9" data-dept="Sports &amp; Recreation">Sports Equipment Damage</option>
+                      </optgroup>
+                      <optgroup label="Canteen &amp; Cafeteria">
+                        <option value="10" data-dept="Canteen &amp; Cafeteria">Canteen Hygiene</option>
+                        <option value="11" data-dept="Canteen &amp; Cafeteria">Canteen Pricing</option>
+                      </optgroup>
+                      <optgroup label="Security">
+                        <option value="12" data-dept="Security">Security Concern</option>
+                        <option value="13" data-dept="Security">Lost &amp; Found</option>
+                      </optgroup>
+                      <optgroup label="Administration">
+                        <option value="14" data-dept="Administration">Administrative Issue</option>
+                        <option value="15" data-dept="Administration">Other</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Auto Department -->
+                <div class="col-md-6">
+                  <label class="form-label-custom" for="autoAssignDept">Assigned Department</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-building-fill"></i></span>
+                    <input type="text" id="autoAssignDept" class="form-control-custom" placeholder="Auto-assigned on category selection" readonly style="background:rgba(248,250,252,0.8);cursor:not-allowed;"/>
+                  </div>
+                </div>
+
+                <!-- Title -->
+                <div class="col-12">
+                  <label class="form-label-custom" for="complaintTitle">Complaint Title *</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-type-h1"></i></span>
+                    <input type="text" id="complaintTitle" name="title" class="form-control-custom" placeholder="Brief, clear title (e.g., WiFi not working in Block B Lab)" required maxlength="200"/>
+                  </div>
+                  <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.25rem;">Max 200 characters</div>
+                </div>
+
+                <!-- Location -->
+                <div class="col-md-6">
+                  <label class="form-label-custom" for="location">Location / Area</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                    <input type="text" id="location" name="location" class="form-control-custom" placeholder="e.g., Block B Lab, Room 204, Library Floor 2"/>
+                  </div>
+                </div>
+
+                <!-- Date Noticed -->
+                <div class="col-md-6">
+                  <label class="form-label-custom" for="dateNoticed">When did you notice it?</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-calendar-fill"></i></span>
+                    <input type="date" id="dateNoticed" name="date_noticed" class="form-control-custom" style="padding-left:2.75rem;"/>
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div class="col-12">
+                  <label class="form-label-custom" for="description">Detailed Description *</label>
+                  <textarea id="description" name="description" class="form-control-custom" rows="5"
+                    placeholder="Describe the issue in detail. Include when it started, how it affects you, and any previous attempts to resolve it..."
+                    required style="padding-left:1rem;resize:vertical;min-height:120px;"></textarea>
+                  <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.25rem;">
+                    <span id="charCount">0</span>/1000 characters
+                  </div>
+                </div>
+
+                <!-- Priority -->
+                <div class="col-12">
+                  <label class="form-label-custom">Priority Level *</label>
+                  <div class="priority-selector">
+                    <label class="priority-option" id="opt-low" onclick="selectPriority('low')">
+                      <input type="radio" name="priority" value="low"/> 🟢 Low
+                    </label>
+                    <label class="priority-option" id="opt-medium" onclick="selectPriority('medium')">
+                      <input type="radio" name="priority" value="medium" checked/> 🔵 Medium
+                    </label>
+                    <label class="priority-option selected-medium" id="opt-high" onclick="selectPriority('high')">
+                      <input type="radio" name="priority" value="high"/> 🟠 High
+                    </label>
+                    <label class="priority-option" id="opt-critical" onclick="selectPriority('critical')">
+                      <input type="radio" name="priority" value="critical"/> 🔴 Critical
+                    </label>
+                  </div>
+                  <div id="priorityHint" style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">
+                    Medium: Affects daily activities. Normal resolution timeline.
+                  </div>
+                </div>
+
+                <!-- File Upload -->
+                <div class="col-12">
+                  <label class="form-label-custom">Attach Evidence (Optional)</label>
+                  <div class="file-upload-area">
+                    <input type="file" name="attachment" accept="image/*,.pdf"/>
+                    <div class="upload-icon">📎</div>
+                    <div class="upload-text">Click or drag file here to upload</div>
+                    <div class="upload-sub">Supports JPG, PNG, PDF, GIF · Max size 5MB</div>
+                  </div>
+                </div>
+
+                <!-- Anonymous -->
+                <div class="col-12">
+                  <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:var(--radius-md);padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:1rem;">
+                    <input type="checkbox" id="isAnonymous" name="is_anonymous" class="form-check-input mt-1" style="width:18px;height:18px;"/>
+                    <div>
+                      <label for="isAnonymous" style="font-weight:700;font-size:0.88rem;color:var(--text-primary);cursor:pointer;">Submit Anonymously</label>
+                      <p style="font-size:0.78rem;color:var(--text-secondary);margin:0.2rem 0 0;">Your name and roll number will be hidden from department staff. Admins may still see your identity for escalation purposes.</p>
+                    </div>
+                    <span style="font-size:1.3rem;margin-left:auto;">🔒</span>
+                  </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="col-12">
+                  <div class="d-flex gap-3 align-items-center">
+                    <button type="submit" class="btn-submit" style="width:auto;padding:0.85rem 2.5rem;">
+                      <i class="bi bi-send-fill"></i> Submit Complaint
+                    </button>
+                    <button type="reset" class="btn-outline-custom" onclick="resetForm()">
+                      <i class="bi bi-arrow-counterclockwise"></i> Reset Form
+                    </button>
+                    <a href="/dashboard" class="btn-outline-custom" style="color:var(--text-secondary);border-color:rgba(148,163,184,0.4);">
+                      Cancel
+                    </a>
+                  </div>
+                  <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;">
+                    ⚠️ False or malicious complaints may result in disciplinary action. Please ensure accuracy.
+                  </p>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="content-card mt-4">
+          <div class="card-header-custom">
+            <div class="card-title-custom"><div class="card-title-icon" style="background:rgba(245,158,11,0.1);color:var(--warning);">💡</div>Tips for Effective Complaints</div>
+          </div>
+          <div class="card-body-custom">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+                  <span style="font-size:1.3rem;">📌</span>
+                  <div><div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">Be Specific</div><div style="font-size:0.78rem;color:var(--text-secondary);">Include exact location, date and time of the issue.</div></div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+                  <span style="font-size:1.3rem;">📸</span>
+                  <div><div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">Attach Proof</div><div style="font-size:0.78rem;color:var(--text-secondary);">Photos and documents help resolve issues 3x faster.</div></div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+                  <span style="font-size:1.3rem;">⚡</span>
+                  <div><div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">Set Right Priority</div><div style="font-size:0.78rem;color:var(--text-secondary);">Reserve Critical for urgent safety and health issues.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/dashboard.js"></script>
+<script>
+// Auto-assign department
+function updateDept() {
+  const sel = document.getElementById('category');
+  const opt = sel.options[sel.selectedIndex];
+  const dept = opt.getAttribute('data-dept') || '';
+  document.getElementById('autoAssignDept').value = dept;
+}
+
+// Priority selector
+const priorityHints = {
+  low:      '🟢 Low: Minor inconvenience. Resolved within 5–7 working days.',
+  medium:   '🔵 Medium: Affects daily activities. Resolved within 48–72 hours.',
+  high:     '🟠 High: Significant disruption. Resolved within 24 hours.',
+  critical: '🔴 Critical: Safety/health emergency. Resolved within 6 hours.'
+};
+
+function selectPriority(val) {
+  ['low','medium','high','critical'].forEach(p => {
+    const el = document.getElementById('opt-' + p);
+    el.className = 'priority-option' + (p === val ? ' selected-' + p : '');
+  });
+  document.getElementById('priorityHint').textContent = priorityHints[val] || '';
+}
+
+// Set today's date
+document.getElementById('dateNoticed').valueAsDate = new Date();
+
+// Character counter
+document.getElementById('description').addEventListener('input', function() {
+  document.getElementById('charCount').textContent = this.value.length;
+});
+
+// Reset form
+function resetForm() {
+  document.querySelectorAll('.priority-option').forEach(o => { o.className = 'priority-option'; });
+  document.getElementById('autoAssignDept').value = '';
+  document.getElementById('charCount').textContent = '0';
+  const uploadText = document.querySelector('.upload-text');
+  if (uploadText) uploadText.textContent = 'Click or drag file here to upload';
+}
+
+// Initialize medium priority as selected on load
+selectPriority('medium');
+</script>
+</body>
+</html>

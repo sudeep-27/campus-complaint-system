@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Help &amp; Support | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ℹ️</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+<div id="toastContainer" class="toast-container-custom"></div>
+
+<!-- Sidebar Overlay (mobile) -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<aside id="sidebar" class="sidebar">
+  <!-- Brand -->
+  <div class="sidebar-logo">
+    <div class="sidebar-icon-box">{% if session.role == 'admin' %}🛡️{% else %}🏫{% endif %}</div>
+    <div class="sidebar-brand-text">
+      <span class="brand-name">CampusVoice</span>
+      <span class="brand-sub">{% if session.role == 'admin' %}Admin Control{% else %}Student Portal{% endif %}</span>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="sidebar-nav">
+    {% if session.role == 'admin' %}
+      <p class="sidebar-section-title">Operations</p>
+      <a href="/admin_dashboard" class="nav-item-custom">
+        <div class="nav-item-icon">🏠</div>
+        <span class="sidebar-label">Dashboard</span>
+      </a>
+      <a href="/notifications" class="nav-item-custom">
+        <div class="nav-item-icon">🔔</div>
+        <span class="sidebar-label">Notifications</span>
+      </a>
+    {% else %}
+      <p class="sidebar-section-title">Main Menu</p>
+      <a href="/dashboard" class="nav-item-custom">
+        <div class="nav-item-icon">🏠</div>
+        <span class="sidebar-label">Dashboard</span>
+      </a>
+      <a href="/complaint" class="nav-item-custom">
+        <div class="nav-item-icon">📝</div>
+        <span class="sidebar-label">New Complaint</span>
+      </a>
+      <a href="/tracking" class="nav-item-custom">
+        <div class="nav-item-icon">📡</div>
+        <span class="sidebar-label">Track Complaints</span>
+      </a>
+      <a href="/notifications" class="nav-item-custom">
+        <div class="nav-item-icon">🔔</div>
+        <span class="sidebar-label">Notifications</span>
+      </a>
+    {% endif %}
+
+    <p class="sidebar-section-title">Account</p>
+    <a href="/profile" class="nav-item-custom">
+      <div class="nav-item-icon">👤</div>
+      <span class="sidebar-label">My Profile</span>
+    </a>
+    <a href="/about" class="nav-item-custom active">
+      <div class="nav-item-icon">ℹ️</div>
+      <span class="sidebar-label">Help &amp; Support</span>
+    </a>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <div class="sidebar-avatar" style="{% if session.role == 'admin' %}background:linear-gradient(135deg,#7c3aed,#4f46e5){% endif %}">{{ session.full_name[:2] | upper if session.get('full_name') else 'US' }}</div>
+    <div class="sidebar-user-info">
+      <div class="user-name">{{ session.full_name or 'User' }}</div>
+      <div class="user-role">{{ session.roll_number or session.role | capitalize }}</div>
+    </div>
+    <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Logout"><i class="bi bi-box-arrow-right"></i></a>
+  </div>
+</aside>
+
+<!-- Sidebar Toggle -->
+<button id="sidebarToggle" class="sidebar-toggle" title="Toggle sidebar"><i class="bi bi-chevron-left"></i></button>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<div id="mainContent" class="main-content">
+
+  <!-- Top Navbar -->
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="page-title-area">
+        <h1 class="page-title">Help &amp; Support</h1>
+        <div class="page-breadcrumb">
+          <span>Home</span><span class="breadcrumb-separator">›</span><span>Help &amp; Support</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-navbar-right">
+      <button class="theme-toggle icon-btn">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <a href="/notifications" class="icon-btn" title="Notifications">
+        <i class="bi bi-bell-fill"></i>
+        <span class="notif-dot"></span>
+      </a>
+      <div class="dash-profile" onclick="window.location='/profile'">
+        <div class="dash-avatar">{{ session.full_name[:2] | upper if session.get('full_name') else 'US' }}</div>
+        <div class="dash-profile-info">
+          <div class="profile-name">{{ session.full_name or 'User' }}</div>
+          <div class="profile-role">{{ session.role | capitalize if session.get('role') else 'Guest' }}</div>
+        </div>
+        <i class="bi bi-chevron-down" style="font-size:0.7rem;color:var(--text-muted);"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dash Body -->
+  <main class="dash-body">
+
+    <div class="row g-4">
+      <!-- Left Panel: FAQ Accordion -->
+      <div class="col-lg-7">
+        <div class="content-card p-4">
+          <h4 class="fw-bold mb-3" style="color:var(--text-primary);">Frequently Asked Questions</h4>
+          <p class="text-secondary mb-4" style="font-size:0.85rem;">Find quick answers regarding complaint submission guidelines, timelines, and resolution processes.</p>
+
+          <div class="accordion" id="faqAccordion">
+            <!-- FAQ Item 1 -->
+            <div class="accordion-item accordion-item-custom">
+              <h2 class="accordion-header">
+                <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                  How do I submit a grievance?
+                </button>
+              </h2>
+              <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary" style="font-size:0.82rem; line-height:1.7;">
+                  Simply head over to the <strong>"New Complaint"</strong> page from the sidebar menu. Choose the correct category, set the priority level, fill out details, optionally attach supporting evidence (images or PDF up to 5MB), choose if you want to submit anonymously, and submit. The system routes it automatically.
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="accordion-item accordion-item-custom">
+              <h2 class="accordion-header">
+                <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                  What are the priority resolution times?
+                </button>
+              </h2>
+              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary" style="font-size:0.82rem; line-height:1.7;">
+                  Timelines are set based on severity levels:
+                  <ul class="mt-2 mb-0 ps-3">
+                    <li><strong>Critical:</strong> Addressed in 6–24 hours (emergencies, security threats).</li>
+                    <li><strong>High:</strong> Resolved within 24–48 hours (WiFi breakdowns, syllabus clashes).</li>
+                    <li><strong>Medium:</strong> Addressed within 48–72 hours (academic general, equipment repairs).</li>
+                    <li><strong>Low:</strong> Addressed in 5–7 working days (general suggestions).</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="accordion-item accordion-item-custom">
+              <h2 class="accordion-header">
+                <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                  How is my identity protected for anonymous filings?
+                </button>
+              </h2>
+              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary" style="font-size:0.82rem; line-height:1.7;">
+                  When you check the <strong>"Submit Anonymously"</strong> option, the system hides your name, email, and roll number from the resolving department staff. Your profile info is only stored at the top level for audit and accountability to prevent spam, while the assigned officer sees you as "Anonymous Student".
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="accordion-item accordion-item-custom">
+              <h2 class="accordion-header">
+                <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                  Can I escalate if I am not satisfied with the result?
+                </h2>
+              </h2>
+              <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-secondary" style="font-size:0.82rem; line-height:1.7;">
+                  Absolutely! When an issue is resolved, you are invited to rate the outcome and submit feedback remarks. If you rate the resolution poorly (e.g. 1 or 2 stars), the system automatically flags the grievance and forwards it directly to the Super Administrator's queue for re-investigation.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Support Contact Form -->
+      <div class="col-lg-5">
+        <div class="content-card p-4">
+          <h4 class="fw-bold mb-1" style="color:var(--text-primary);">Contact Support Office</h4>
+          <p class="text-secondary mb-4" style="font-size:0.82rem;">Need directly to contact system tech-support? Fill the query form below.</p>
+
+          <form id="contactForm" onsubmit="event.preventDefault(); Toast.success('Query Sent', 'Your message has been sent to technical support.'); this.reset();">
+            <!-- Name -->
+            <div class="mb-3">
+              <label class="form-label-custom mb-1" for="contactName">Full Name</label>
+              <input type="text" id="contactName" class="form-control-custom" value="{{ session.get('full_name', '') }}" required style="background:var(--bg); border-color:var(--border-glass); color:var(--text-primary);"/>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label-custom mb-1" for="contactEmail">University Email</label>
+              <input type="email" id="contactEmail" class="form-control-custom" value="{{ session.get('email', '') }}" required style="background:var(--bg); border-color:var(--border-glass); color:var(--text-primary);"/>
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-3">
+              <label class="form-label-custom mb-1" for="contactSubject">Subject</label>
+              <input type="text" id="contactSubject" class="form-control-custom" placeholder="Issue with attachment upload..." required style="background:var(--bg); border-color:var(--border-glass); color:var(--text-primary);"/>
+            </div>
+
+            <!-- Message -->
+            <div class="mb-4">
+              <label class="form-label-custom mb-1" for="contactMessage">Support Message</label>
+              <textarea id="contactMessage" class="form-control" rows="4" placeholder="Describe your question or technical problem in detail..." style="background:var(--bg); border-color:var(--border-glass); color:var(--text-primary); border-radius:10px;" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" style="background:var(--gradient-primary); border:none; padding:0.75rem; border-radius:var(--radius-full); font-weight:700; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+              <i class="bi bi-send"></i> Send Support Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

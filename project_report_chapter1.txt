@@ -1,0 +1,42 @@
+CHAPTER 1: INTRODUCTION, OBJECTIVES, AND SCOPE OF THE PROJECT
+
+1.1 INTRODUCTION
+
+In modern educational institutions, managing campus infrastructure, academic grievances, facility maintenance, and administrative issues efficiently is critical to maintaining a healthy and productive learning environment. Historically, campus grievance management has relied heavily on manual, paper-based workflows, physical drop-boxes, or unorganized email threads. These traditional systems suffer from several severe bottlenecks, including delayed response times, lack of transparency for students tracking their complaint status, manual routing errors by administrative staff, and a complete absence of accountability or audit trails. Without a centralized tracking mechanism, complaints are easily lost or ignored, and administrators cannot measure staff performance or typical resolution times.
+
+To resolve these inefficiencies, this project introduces the Campus Complaint Management System (also known as CampusVoice). This is a comprehensive, full-stack, database-driven web application designed to centralize and automate the entire complaint lifecycle on a college campus. Built using a robust Python Flask backend and a highly organized relational MySQL database, the system acts as a bridge between three key roles: Students, Departmental Staff Officers, and Administrators. Students can register, submit complaints with file attachments, track their status along a visual timeline, and provide rating feedback once resolved. Administrators can monitor campus-wide statistics, filter complaints, and assign staff members to resolve specific issues. Staff officers can log in to view their assigned tasks, message students directly for clarification, and update complaint statuses. 
+
+From a database design perspective, this project implements advanced Relational Database Management System (RDBMS) features. It uses 8 normalized tables with foreign key constraints to enforce data integrity. A specialized database view simplifies complex multi-table joins to retrieve readable complaint information efficiently, and custom stored procedures handle status updates, logging, and notifications in single atomic transactions. Furthermore, automated triggers manage resolution timestamps and map complaints to departments without manual input. This ensures that the system is not only an interactive web portal but also a secure, high-performance, and resilient database management tool.
+
+--------------------------------------------------------------------------------
+
+1.2 OBJECTIVES OF THE PROJECT
+
+The primary objectives of developing the Campus Complaint Management System are:
+
+1. To Centralize Campus Grievance Redressal: Build a unified, web-based platform that replaces manual complaint filing with a secure digital system, making it easy for students to submit complaints anytime, anywhere.
+2. To Automate Complaint Routing: Implement database-level trigger logic (trg_auto_assign_dept) to automatically route complaints to the appropriate handling department (such as IT, Hostel, or Academics) based on the category chosen by the student.
+3. To Ensure Accountability and Transparency: Track every status transition of a complaint in an audit trail table (complaint_logs) to show a complete tracking timeline to students and maintain transparency on who resolved the issue and when.
+4. To Implement Role-Based Access Control (RBAC): Secure the application by separating access portals for Students, Staff, and Administrators, ensuring that users can only view or edit data relevant to their role.
+5. To Provide Actionable Analytics: Create dynamic dashboards for administrators and students showing real-time statistics (Total, Pending, In-Progress, and Resolved complaints) alongside visual progress charts.
+6. To Maintain High Database Integrity: Enforce strict relational rules (Foreign Key constraints, ON DELETE CASCADE, ON DELETE SET NULL, CHECK constraints) and use cryptographic Bcrypt hashing to protect user passwords from security breaches.
+
+--------------------------------------------------------------------------------
+
+1.3 SCOPE OF THE PROJECT
+
+The scope of this project covers the development, implementation, and verification of a web-based campus portal, defined by the following boundaries:
+
+* Target Audience: The system is designed specifically for college campuses, catering to registered students, administrative heads, and departmental facilities staff.
+* Functional Scope:
+    - User Management: Secure registration, login, and profile tracking for students, staff, and admins.
+    - Complaint Management: Creation of complaints with details such as title, description, priority, location, and file attachments (images or PDFs).
+    - Staff Assignment: Administrative routing and assignment of staff members to resolve pending issues.
+    - Interactive Features: Comment threads allowing direct dialogue between students and staff regarding specific complaints.
+    - Feedback Mechanism: A star-rating evaluation system (1-5 scale) that students use to grade resolution quality.
+    - Notification Engine: Real-time automated system alerts informing users of assignments, comments, and status changes.
+* Database Scope: The backend database runs on MySQL (utilizing the InnoDB storage engine for foreign keys) with an automated local SQLite fallback configuration to ensure the application remains operational even during local database server maintenance.
+* Out of Scope (Future Enhancements):
+    - Scaling the application to manage multiple separate college campuses under a single tenant.
+    - Integrating third-party SMS gateways for real-time mobile notifications.
+    - Using machine learning/AI algorithms to analyze the text of a complaint and automatically predict its priority level.

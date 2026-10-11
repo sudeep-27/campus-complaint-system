@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Campus Complaint Management System - Streamline your university grievance process with our modern digital portal."/>
+  <title>CampusVoice | Campus Complaint Management System</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏫</text></svg>"/>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+
+<!-- ── Page Loader ─────────────────────────────────────────── -->
+<div id="pageLoader" class="page-loader">
+  <div class="loader-logo">🏫</div>
+  <div class="loader-spinner"></div>
+  <p class="loader-text">Loading CampusVoice...</p>
+</div>
+
+<!-- ── Toast Container ─────────────────────────────────────── -->
+<div id="toastContainer" class="toast-container-custom"></div>
+
+<!-- ── Back to Top ─────────────────────────────────────────── -->
+<button class="back-to-top" aria-label="Back to top"><i class="bi bi-chevron-up"></i></button>
+
+<!-- ════════════════════════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════════════════════ -->
+<nav class="main-navbar">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between w-100">
+
+      <!-- Brand -->
+      <a href="/" class="navbar-brand-custom text-decoration-none">
+        <div class="brand-icon">🏫</div>
+        <div class="brand-text">
+          <span class="title">CampusVoice</span>
+          <span class="subtitle">Complaint Portal</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="d-none d-lg-flex align-items-center gap-1">
+        <a href="#features"      class="nav-link-custom">Features</a>
+        <a href="#how-it-works"  class="nav-link-custom">How It Works</a>
+        <a href="#stats"         class="nav-link-custom">Statistics</a>
+        <a href="#testimonials"  class="nav-link-custom">Testimonials</a>
+        <a href="/about"     class="nav-link-custom">About</a>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex align-items-center gap-2">
+        <button class="theme-toggle" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <a href="/login"    class="btn-nav-login d-none d-md-inline-flex">Login</a>
+        <a href="/register" class="btn-nav-register d-none d-md-inline-flex">Register</a>
+
+        <!-- Mobile Menu -->
+        <button class="d-lg-none" style="background:none;border:none;color:#fff;font-size:1.4rem;" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Offcanvas Menu -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" style="background:#0f2444;max-width:280px;">
+  <div class="offcanvas-header border-bottom border-white border-opacity-10">
+    <div class="navbar-brand-custom">
+      <div class="brand-icon">🏫</div>
+      <div class="brand-text"><span class="title">CampusVoice</span></div>
+    </div>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="d-flex flex-column gap-1 mt-2">
+      <a href="#features"     class="nav-link-custom" data-bs-dismiss="offcanvas">Features</a>
+      <a href="#how-it-works" class="nav-link-custom" data-bs-dismiss="offcanvas">How It Works</a>
+      <a href="#stats"        class="nav-link-custom" data-bs-dismiss="offcanvas">Statistics</a>
+      <a href="/about"    class="nav-link-custom" data-bs-dismiss="offcanvas">About</a>
+    </nav>
+    <hr style="border-color:rgba(255,255,255,0.15)">
+    <a href="/login"    class="btn-nav-login d-block text-center mb-2">Login</a>
+    <a href="/register" class="btn-nav-register d-block text-center">Register</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     HERO SECTION
+════════════════════════════════════════════════════════════ -->
+<section class="hero-section" id="home">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+
+  <div class="container">
+    <div class="row align-items-center g-5">
+
+      <!-- Hero Text -->
+      <div class="col-lg-6 hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          🏆 #1 Campus Grievance Portal
+        </div>
+
+        <h1 class="hero-title">
+          Your Voice,<br/>
+          <span class="gradient-text">Heard & Resolved</span><br/>
+          On Campus
+        </h1>
+
+        <p class="hero-desc">
+          Submit, track, and resolve campus complaints with complete transparency.
+          A modern digital portal connecting students with administration for faster,
+          fairer, and more efficient grievance management.
+        </p>
+
+        <div class="hero-actions d-flex flex-wrap gap-3">
+          <a href="/register" class="btn-hero-primary">
+            <i class="bi bi-pencil-square"></i> File a Complaint
+          </a>
+          <a href="/login" class="btn-hero-outline">
+            <i class="bi bi-eye"></i> Track Status
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="value" data-counter="4800" data-suffix="+">0</span>
+            <span class="label">Complaints Resolved</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="value" data-counter="98" data-suffix="%">0</span>
+            <span class="label">Satisfaction Rate</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="value" data-counter="24" data-suffix="h">0</span>
+            <span class="label">Avg. Resolution</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <!-- Floating cards -->
+          <div class="floating-card floating-card-1">
+            <div class="fc-icon" style="background:rgba(16,185,129,0.1)">✅</div>
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;">Resolved!</div>
+              <div style="font-size:0.7rem;color:#64748b">WiFi complaint #1021</div>
+            </div>
+          </div>
+          <div class="floating-card floating-card-2">
+            <div class="fc-icon" style="background:rgba(245,158,11,0.1)">⚡</div>
+            <div>
+              <div style="font-weight:700;font-size:0.82rem;">New Complaint</div>
+              <div style="font-size:0.7rem;color:#64748b">Processing...</div>
+            </div>
+          </div>
+
+          <!-- Main Card -->
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <span class="hero-card-title">📋 Recent Complaints</span>
+              <div class="status-dots">
+                <div class="status-dot dot-red"></div>
+                <div class="status-dot dot-yellow"></div>
+                <div class="status-dot dot-green"></div>
+              </div>
+            </div>
+
+            <div class="complaint-item">
+              <div class="complaint-icon" style="background:rgba(239,68,68,0.15)">📶</div>
+              <div class="complaint-item-info">
+                <div class="complaint-item-title">WiFi Issue – Lab Block B</div>
+                <div class="complaint-item-sub">IT &amp; Infrastructure · 2h ago</div>
+              </div>
+              <span class="badge-status badge-progress">In Progress</span>
+            </div>
+
+            <div class="complaint-item">
+              <div class="complaint-icon" style="background:rgba(245,158,11,0.15)">🚿</div>
+              <div class="complaint-item-info">
+                <div class="complaint-item-title">Hostel Plumbing – Room 204</div>
+                <div class="complaint-item-sub">Hostel &amp; Facilities · 5h ago</div>
+              </div>
+              <span class="badge-status badge-pending">Pending</span>
+            </div>
+
+            <div class="complaint-item">
+              <div class="complaint-icon" style="background:rgba(16,185,129,0.15)">📚</div>
+              <div class="complaint-item-info">
+                <div class="complaint-item-title">Library Books Missing</div>
+                <div class="complaint-item-sub">Library · 1d ago</div>
+              </div>
+              <span class="badge-status badge-resolved">Resolved</span>
+            </div>
+
+            <div class="complaint-item">
+              <div class="complaint-icon" style="background:rgba(99,102,241,0.15)">🍽️</div>
+              <div class="complaint-item-info">
+                <div class="complaint-item-title">Canteen Hygiene Concern</div>
+                <div class="complaint-item-sub">Canteen · 3h ago</div>
+              </div>
+              <span class="badge-status badge-review">Under Review</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mt-3 p-3" style="background:rgba(255,255,255,0.08);border-radius:12px;">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span style="font-size:0.78rem;color:rgba(255,255,255,0.7)">Monthly Resolution Rate</span>
+                <span style="font-size:0.82rem;font-weight:700;color:#fff">92%</span>
+              </div>
+              <div style="height:6px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:92%;background:linear-gradient(90deg,#10b981,#34d399);border-radius:3px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     FEATURES SECTION
+════════════════════════════════════════════════════════════ -->
+<section id="features" class="section-bg-alt">
+  <div class="container">
+    <div class="text-center mb-5 animate-on-scroll">
+      <span class="section-badge">✨ Key Features</span>
+      <h2 class="section-title">Everything You Need for<br/><span class="gradient-text">Effective Grievance Management</span></h2>
+      <p class="section-desc">Our platform offers a comprehensive suite of tools for students, staff, and administrators to manage campus complaints efficiently.</p>
+    </div>
+
+    <div class="row g-4 stagger-children">
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="feature-card">
+          <div class="feature-icon fi-blue"><i class="bi bi-lightning-charge-fill"></i></div>
+          <h3 class="feature-title">Instant Submission</h3>
+          <p class="feature-desc">Submit complaints in under 60 seconds with our smart forms. Attach photos, documents and set priority levels instantly.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="feature-card">
+          <div class="feature-icon fi-purple"><i class="bi bi-radar"></i></div>
+          <h3 class="feature-title">Real-Time Tracking</h3>
+          <p class="feature-desc">Monitor complaint progress with live status updates and detailed timelines. Know exactly where your complaint stands.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="feature-card">
+          <div class="feature-icon fi-green"><i class="bi bi-bell-fill"></i></div>
+          <h3 class="feature-title">Smart Notifications</h3>
+          <p class="feature-desc">Receive instant in-app notifications whenever your complaint status changes or new remarks are added.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="feature-card">
+          <div class="feature-icon fi-orange"><i class="bi bi-diagram-3-fill"></i></div>
+          <h3 class="feature-title">Dept. Auto-Routing</h3>
+          <p class="feature-desc">Complaints are automatically routed to the correct department based on category — no manual sorting needed.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="feature-card">
+          <div class="feature-icon fi-red"><i class="bi bi-shield-lock-fill"></i></div>
+          <h3 class="feature-title">Anonymous Complaints</h3>
+          <p class="feature-desc">File complaints anonymously when needed. Your identity stays protected while your issue gets full attention.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="feature-card">
+          <div class="feature-icon fi-cyan"><i class="bi bi-graph-up-arrow"></i></div>
+          <h3 class="feature-title">Admin Analytics</h3>
+          <p class="feature-desc">Powerful dashboards with charts and statistics help administrators identify patterns and resolve systemic issues.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════════════════════════════ -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="text-center mb-5 animate-on-scroll">
+      <span class="section-badge">📋 Process</span>
+      <h2 class="section-title">How <span class="gradient-text">CampusVoice</span> Works</h2>
+      <p class="section-desc">A simple 4-step process to get your complaint filed, routed, and resolved.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <div class="step-connector d-none d-md-block"></div>
+          <h4 class="step-title">Register & Login</h4>
+          <p class="step-desc">Create your student account using your college email and roll number.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <div class="step-connector d-none d-md-block"></div>
+          <h4 class="step-title">Submit Complaint</h4>
+          <p class="step-desc">Fill out the smart complaint form with category, description and priority.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <div class="step-connector d-none d-md-block"></div>
+          <h4 class="step-title">Auto-Assignment</h4>
+          <p class="step-desc">System routes to the correct department and assigns staff automatically.</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="process-step">
+          <div class="step-number">4</div>
+          <h4 class="step-title">Track & Resolve</h4>
+          <p class="step-desc">Monitor real-time updates and receive notification when resolved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     STATISTICS
+════════════════════════════════════════════════════════════ -->
+<section id="stats" class="stats-section">
+  <div class="container">
+    <div class="row g-0">
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="stat-card">
+          <span class="stat-icon">📨</span>
+          <span class="stat-number" data-counter="5240" data-suffix="">0</span>
+          <span class="stat-label">Complaints Filed</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="stat-card">
+          <span class="stat-icon">✅</span>
+          <span class="stat-number" data-counter="4830" data-suffix="">0</span>
+          <span class="stat-label">Complaints Resolved</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="stat-card">
+          <span class="stat-icon">⚡</span>
+          <span class="stat-number" data-counter="18" data-suffix="h">0</span>
+          <span class="stat-label">Avg. Resolution Time</span>
+        </div>
+      </div>
+      <div class="col-6 col-md-3 animate-on-scroll">
+        <div class="stat-card">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-number" data-counter="97" data-suffix="%">0</span>
+          <span class="stat-label">Satisfaction Rate</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════════════════════════ -->
+<section id="testimonials" class="section-bg-alt">
+  <div class="container">
+    <div class="text-center mb-5 animate-on-scroll">
+      <span class="section-badge">💬 Testimonials</span>
+      <h2 class="section-title">What Students <span class="gradient-text">Are Saying</span></h2>
+    </div>
+
+    <div class="row g-4 stagger-children">
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="testimonial-card">
+          <span class="stars">★★★★★</span>
+          <span class="quote-icon">"</span>
+          <p class="testimonial-text">My hostel WiFi complaint was resolved in just 6 hours! The tracking feature kept me updated every step of the way. This portal is genuinely impressive.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">AM</div>
+            <div>
+              <div class="author-name">Arjun Mehta</div>
+              <div class="author-role">B.Tech CSE, 3rd Year</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="testimonial-card">
+          <span class="stars">★★★★★</span>
+          <span class="quote-icon">"</span>
+          <p class="testimonial-text">The anonymous complaint feature gave me the courage to report a sensitive issue. It was handled professionally and privately. Excellent system!</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">PS</div>
+            <div>
+              <div class="author-name">Priya Sharma</div>
+              <div class="author-role">B.Tech ECE, 2nd Year</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 animate-on-scroll">
+        <div class="testimonial-card">
+          <span class="stars">★★★★☆</span>
+          <span class="quote-icon">"</span>
+          <p class="testimonial-text">As a department head, this dashboard has transformed how we handle complaints. The auto-routing saves hours of manual work every week.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">RK</div>
+            <div>
+              <div class="author-name">Dr. Ramesh Kumar</div>
+              <div class="author-role">Head, IT Department</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     FAQ
+════════════════════════════════════════════════════════════ -->
+<section id="faq">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="text-center mb-5 animate-on-scroll">
+          <span class="section-badge">❓ FAQ</span>
+          <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+        </div>
+
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item accordion-item-custom animate-on-scroll">
+            <h3 class="accordion-header">
+              <button class="accordion-button accordion-button-custom" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                Who can use the Campus Complaint Management System?
+              </button>
+            </h3>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body" style="font-size:0.9rem;color:var(--text-secondary);">
+                Any registered student or staff member of the campus can use CampusVoice. Students can file and track complaints, while staff and administrators can manage and resolve them through their respective dashboards.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item accordion-item-custom animate-on-scroll">
+            <h3 class="accordion-header">
+              <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                Can I file a complaint anonymously?
+              </button>
+            </h3>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body" style="font-size:0.9rem;color:var(--text-secondary);">
+                Yes! When submitting a complaint, simply check the "Submit Anonymously" option. Your personal information will be hidden from department staff, though admins may still see it for accountability purposes.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item accordion-item-custom animate-on-scroll">
+            <h3 class="accordion-header">
+              <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                How long does it take to resolve a complaint?
+              </button>
+            </h3>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body" style="font-size:0.9rem;color:var(--text-secondary);">
+                Critical and High priority complaints are addressed within 6–24 hours. Medium priority complaints are resolved within 48–72 hours. Low priority complaints within 5–7 working days. Our current average is 18 hours.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item accordion-item-custom animate-on-scroll">
+            <h3 class="accordion-header">
+              <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                Can I attach files or images to my complaint?
+              </button>
+            </h3>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body" style="font-size:0.9rem;color:var(--text-secondary);">
+                Absolutely. You can attach images (JPG, PNG), PDF documents, or GIF files up to 5MB each when filing a complaint. Supporting evidence helps resolve issues faster.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item accordion-item-custom animate-on-scroll">
+            <h3 class="accordion-header">
+              <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                What if I'm not satisfied with the resolution?
+              </button>
+            </h3>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body" style="font-size:0.9rem;color:var(--text-secondary);">
+                After a complaint is resolved, you can submit feedback and rate the resolution. If unsatisfied, you can escalate the complaint to the admin level for review and re-investigation.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     CTA SECTION
+════════════════════════════════════════════════════════════ -->
+<section style="background:var(--gradient-primary);padding:5rem 0;">
+  <div class="container text-center animate-on-scroll">
+    <h2 style="font-size:2.5rem;font-weight:800;color:#fff;margin-bottom:1rem;">
+      Ready to Make Your <span style="color:#93c5fd;">Voice Heard?</span>
+    </h2>
+    <p style="color:rgba(255,255,255,0.75);font-size:1.05rem;max-width:550px;margin:0 auto 2rem;">
+      Join thousands of students who use CampusVoice to resolve campus issues quickly and transparently.
+    </p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="/register" class="btn-hero-primary">
+        <i class="bi bi-person-plus-fill"></i> Create Free Account
+      </a>
+      <a href="/login" class="btn-hero-outline">
+        <i class="bi bi-box-arrow-in-right"></i> Sign In
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="main-footer">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="footer-brand">
+          <div class="navbar-brand-custom mb-3">
+            <div class="brand-icon">🏫</div>
+            <div class="brand-text">
+              <span class="title" style="color:#fff">CampusVoice</span>
+              <span class="subtitle">Complaint Portal</span>
+            </div>
+          </div>
+        </div>
+        <p class="footer-desc">Empowering students to voice concerns and administrators to resolve them — building a better campus community together.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-btn"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="social-btn"><i class="bi bi-github"></i></a>
+          <a href="#" class="social-btn"><i class="bi bi-envelope-fill"></i></a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <p class="footer-heading">Quick Links</p>
+        <a href="/"    class="footer-link">Home</a>
+        <a href="/login"    class="footer-link">Student Login</a>
+        <a href="/register" class="footer-link">Register</a>
+        <a href="/tracking" class="footer-link">Track Complaint</a>
+        <a href="/about"    class="footer-link">About</a>
+        <a href="/admin/login" class="footer-link">Admin Login</a>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <p class="footer-heading">Departments</p>
+        <a href="#" class="footer-link">IT &amp; Infrastructure</a>
+        <a href="#" class="footer-link">Hostel &amp; Facilities</a>
+        <a href="#" class="footer-link">Academic Affairs</a>
+        <a href="#" class="footer-link">Library</a>
+        <a href="#" class="footer-link">Administration</a>
+      </div>
+
+      <div class="col-lg-4">
+        <p class="footer-heading">Contact Support</p>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.85rem;">
+            <i class="bi bi-geo-alt-fill" style="color:var(--accent-light)"></i>
+            <span style="color:rgba(255,255,255,0.5)">University Campus, Block A, Administration Building</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.85rem;">
+            <i class="bi bi-telephone-fill" style="color:var(--accent-light)"></i>
+            <span style="color:rgba(255,255,255,0.5)">+91 98765 43210</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.85rem;">
+            <i class="bi bi-envelope-fill" style="color:var(--accent-light)"></i>
+            <span style="color:rgba(255,255,255,0.5)">support@campus.edu</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;font-size:0.85rem;">
+            <i class="bi bi-clock-fill" style="color:var(--accent-light)"></i>
+            <span style="color:rgba(255,255,255,0.5)">Mon–Sat, 9:00 AM – 5:00 PM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="footer-divider"/>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 footer-bottom">
+      <p class="mb-0">© 2025 CampusVoice. All rights reserved. Built for DBMS Project.</p>
+      <div class="d-flex gap-3">
+        <a href="#" style="color:rgba(255,255,255,0.35);font-size:0.82rem;">Privacy Policy</a>
+        <a href="#" style="color:rgba(255,255,255,0.35);font-size:0.82rem;">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+</body>
+</html>

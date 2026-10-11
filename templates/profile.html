@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+<div id="toastContainer" class="toast-container-custom"></div>
+
+<!-- Sidebar Overlay (mobile) -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<aside id="sidebar" class="sidebar">
+  <!-- Brand -->
+  <div class="sidebar-logo">
+    <div class="sidebar-icon-box">{% if session.role == 'admin' %}🛡️{% else %}🏫{% endif %}</div>
+    <div class="sidebar-brand-text">
+      <span class="brand-name">CampusVoice</span>
+      <span class="brand-sub">{% if session.role == 'admin' %}Admin Control{% else %}Student Portal{% endif %}</span>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="sidebar-nav">
+    {% if session.role == 'admin' %}
+      <p class="sidebar-section-title">Operations</p>
+      <a href="/admin_dashboard" class="nav-item-custom">
+        <div class="nav-item-icon">🏠</div>
+        <span class="sidebar-label">Dashboard</span>
+      </a>
+      <a href="/notifications" class="nav-item-custom">
+        <div class="nav-item-icon">🔔</div>
+        <span class="sidebar-label">Notifications</span>
+      </a>
+    {% else %}
+      <p class="sidebar-section-title">Main Menu</p>
+      <a href="/dashboard" class="nav-item-custom">
+        <div class="nav-item-icon">🏠</div>
+        <span class="sidebar-label">Dashboard</span>
+      </a>
+      <a href="/complaint" class="nav-item-custom">
+        <div class="nav-item-icon">📝</div>
+        <span class="sidebar-label">New Complaint</span>
+      </a>
+      <a href="/tracking" class="nav-item-custom">
+        <div class="nav-item-icon">📡</div>
+        <span class="sidebar-label">Track Complaints</span>
+      </a>
+      <a href="/notifications" class="nav-item-custom">
+        <div class="nav-item-icon">🔔</div>
+        <span class="sidebar-label">Notifications</span>
+      </a>
+    {% endif %}
+
+    <p class="sidebar-section-title">Account</p>
+    <a href="/profile" class="nav-item-custom active">
+      <div class="nav-item-icon">👤</div>
+      <span class="sidebar-label">My Profile</span>
+    </a>
+    <a href="/about" class="nav-item-custom">
+      <div class="nav-item-icon">ℹ️</div>
+      <span class="sidebar-label">Help &amp; Support</span>
+    </a>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <div class="sidebar-avatar" style="{% if session.role == 'admin' %}background:linear-gradient(135deg,#7c3aed,#4f46e5){% endif %}">{{ session.full_name[:2] | upper if session.get('full_name') else 'US' }}</div>
+    <div class="sidebar-user-info">
+      <div class="user-name">{{ session.full_name or 'User' }}</div>
+      <div class="user-role">{{ session.roll_number or session.role | capitalize }}</div>
+    </div>
+    <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Logout"><i class="bi bi-box-arrow-right"></i></a>
+  </div>
+</aside>
+
+<!-- Sidebar Toggle -->
+<button id="sidebarToggle" class="sidebar-toggle" title="Toggle sidebar"><i class="bi bi-chevron-left"></i></button>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<div id="mainContent" class="main-content">
+
+  <!-- Top Navbar -->
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="page-title-area">
+        <h1 class="page-title">My Profile</h1>
+        <div class="page-breadcrumb">
+          <span>Home</span><span class="breadcrumb-separator">›</span><span>My Profile</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-navbar-right">
+      <button class="theme-toggle icon-btn">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <a href="/notifications" class="icon-btn" title="Notifications">
+        <i class="bi bi-bell-fill"></i>
+      </a>
+      <div class="dash-profile" onclick="window.location='/profile'">
+        <div class="dash-avatar">{{ session.full_name[:2] | upper }}</div>
+        <div class="dash-profile-info">
+          <div class="profile-name">{{ session.full_name }}</div>
+          <div class="profile-role">{{ session.role | capitalize }}</div>
+        </div>
+        <i class="bi bi-chevron-down" style="font-size:0.7rem;color:var(--text-muted);"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dash Body -->
+  <main class="dash-body">
+
+    <div class="row g-4">
+      <!-- Left Panel: Avatar & Card summary -->
+      <div class="col-lg-4">
+        <div class="content-card text-center p-4">
+          <div class="position-relative d-inline-block mx-auto mb-3">
+            <div class="sidebar-avatar mx-auto" style="width:100px; height:100px; font-size:2.5rem; border-radius:50%; border:3px solid var(--primary-light);">{{ session.full_name[:2] | upper }}</div>
+            <button onclick="Toast.info('Upload Image', 'Profile picture modification is locked for verification purposes.')" class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center" style="width:32px; height:32px; padding:0; background:var(--gradient-primary); border:none;" title="Edit Avatar">
+              <i class="bi bi-camera-fill" style="font-size:0.85rem;"></i>
+            </button>
+          </div>
+
+          <h3 class="fw-bold mb-1" style="color:var(--text-primary);">{{ user.full_name }}</h3>
+          <span class="badge-status badge-progress mb-3">{{ user.roll_number or user.role | capitalize }}</span>
+
+          <hr class="opacity-10"/>
+
+          <div class="text-start" style="font-size:0.85rem;">
+            <div class="mb-2">
+              <span class="text-muted d-block" style="font-size:0.75rem;font-weight:600;text-transform:uppercase;">College Email</span>
+              <span class="fw-semibold text-secondary">{{ user.email }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-muted d-block" style="font-size:0.75rem;font-weight:600;text-transform:uppercase;">Department</span>
+              <span class="fw-semibold text-secondary">{{ user.dept_name or 'Administration / General' }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="text-muted d-block" style="font-size:0.75rem;font-weight:600;text-transform:uppercase;">Member Since</span>
+              <span class="fw-semibold text-secondary">
+                {{ user.created_at[:10] if isinstance(user.created_at, str) else user.created_at.strftime('%Y-%m-%d') }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Profile Forms -->
+      <div class="col-lg-8">
+        <div class="d-flex flex-column gap-4">
+
+          <!-- Personal Details -->
+          <div class="content-card">
+            <div class="card-header-custom">
+              <div class="card-title-custom">
+                <div class="card-title-icon" style="background:rgba(37,99,235,0.1);color:var(--primary-light);">👤</div>
+                Personal Information
+              </div>
+            </div>
+            <div class="card-body-custom">
+              <form id="profileForm">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-custom mb-1" for="profileName">Full Name</label>
+                    <input type="text" id="profileName" class="form-control-custom" value="{{ user.full_name }}" disabled/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-custom mb-1" for="profileRoll">Roll Number</label>
+                    <input type="text" id="profileRoll" class="form-control-custom" value="{{ user.roll_number or '' }}" disabled/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-custom mb-1" for="profileEmail">University Email</label>
+                    <input type="email" id="profileEmail" class="form-control-custom" value="{{ user.email }}" disabled/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-custom mb-1" for="profilePhone">Phone Number</label>
+                    <input type="text" id="profilePhone" class="form-control-custom" value="{{ user.phone or '' }}" style="background:var(--bg); color:var(--text-primary); border-color:var(--border-glass);" required/>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-custom mb-1" for="profileDept">Department</label>
+                    <select id="profileDept" class="form-select" style="background:var(--bg); color:var(--text-primary); border-color:var(--border-glass); padding:0.6rem; border-radius:10px;" required>
+                      <option value="1" {{ 'selected' if user.dept_id == 1 else '' }}>IT &amp; Infrastructure</option>
+                      <option value="2" {{ 'selected' if user.dept_id == 2 else '' }}>Academic Affairs</option>
+                      <option value="3" {{ 'selected' if user.dept_id == 3 else '' }}>Hostel &amp; Facilities</option>
+                      <option value="4" {{ 'selected' if user.dept_id == 4 else '' }}>Library</option>
+                      <option value="5" {{ 'selected' if user.dept_id == 5 else '' }}>Sports &amp; Recreation</option>
+                      <option value="6" {{ 'selected' if user.dept_id == 6 else '' }}>Canteen &amp; Cafeteria</option>
+                      <option value="7" {{ 'selected' if user.dept_id == 7 else '' }}>Security</option>
+                      <option value="8" {{ 'selected' if user.dept_id == 8 else '' }}>Administration</option>
+                      <option value="9" {{ 'selected' if user.dept_id == 9 else '' }}>Student</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mt-4 text-end">
+                  <button type="submit" class="btn btn-primary" style="background:var(--gradient-primary); border:none; padding:0.6rem 2rem; border-radius:var(--radius-full); font-weight:600; font-size:0.85rem;">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Password Security -->
+          <div class="content-card">
+            <div class="card-header-custom">
+              <div class="card-title-custom">
+                <div class="card-title-icon" style="background:rgba(99,102,241,0.1);color:var(--accent);">🔒</div>
+                Account Security
+              </div>
+            </div>
+            <div class="card-body-custom">
+              <form id="changePasswordForm">
+                <!-- Current Password -->
+                <div class="mb-3">
+                  <label class="form-label-custom mb-1" for="currentPassword">Current Password</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-key-fill"></i></span>
+                    <input type="password" id="currentPassword" class="form-control-custom" placeholder="Enter current password" required style="padding-right:2.75rem; background:var(--bg); border-color:var(--border-glass); color:var(--text-primary);"/>
+                    <span class="input-icon-right" data-toggle-pw="#currentPassword">👁️</span>
+                  </div>
+                </div>
+
+                <!-- New Password -->
+                <div class="mb-3">
+                  <label class="form-label-custom mb-1" for="password">New Password</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-lock-fill"></i></span>
+                    <input type="password" id="password" class="form-control-custom" placeholder="Minimum 8 characters..." required style="padding-right:2.75rem; background:var(--bg); border-color:var(--border-glass); color:var(--text-primary);"/>
+                    <span class="input-icon-right" data-toggle-pw="#password">👁️</span>
+                  </div>
+                  <!-- Password Strength Meter -->
+                  <div class="mt-2">
+                    <div style="height:5px; background:rgba(0,0,0,0.06); border-radius:3px; overflow:hidden;">
+                      <div id="strengthFill" style="height:100%; width:0%; transition:all 0.3s ease;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-1" style="font-size:0.75rem; font-weight:600;">
+                      <span style="color:var(--text-muted);">Password Strength</span>
+                      <span id="strengthLabel" style="color:var(--text-muted);"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-4">
+                  <label class="form-label-custom mb-1" for="confirmPassword">Confirm Password</label>
+                  <div class="input-group-custom">
+                    <span class="input-icon"><i class="bi bi-shield-check"></i></span>
+                    <input type="password" id="confirmPassword" class="form-control-custom" placeholder="Re-enter new password" required style="padding-right:2.75rem; background:var(--bg); border-color:var(--border-glass); color:var(--text-primary);"/>
+                    <span class="input-icon-right" data-toggle-pw="#confirmPassword">👁️</span>
+                  </div>
+                </div>
+
+                <div class="text-end">
+                  <button type="submit" class="btn btn-primary" style="background:var(--gradient-primary); border:none; padding:0.6rem 2rem; border-radius:var(--radius-full); font-weight:600; font-size:0.85rem;">Change Password</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

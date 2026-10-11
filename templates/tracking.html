@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Complaints | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+<div id="toastContainer" class="toast-container-custom"></div>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-icon-box">🏫</div>
+    <div class="sidebar-brand-text"><span class="brand-name">CampusVoice</span><span class="brand-sub">Student Portal</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <p class="sidebar-section-title">Main Menu</p>
+    <a href="/dashboard"   class="nav-item-custom"><div class="nav-item-icon">🏠</div><span class="sidebar-label">Dashboard</span></a>
+    <a href="/complaint"   class="nav-item-custom"><div class="nav-item-icon">📝</div><span class="sidebar-label">New Complaint</span></a>
+    <a href="/tracking"    class="nav-item-custom active"><div class="nav-item-icon">📡</div><span class="sidebar-label">Track Complaints</span></a>
+    <a href="/notifications" class="nav-item-custom"><div class="nav-item-icon">🔔</div><span class="sidebar-label">Notifications</span></a>
+    <p class="sidebar-section-title">Account</p>
+    <a href="/profile"     class="nav-item-custom"><div class="nav-item-icon">👤</div><span class="sidebar-label">My Profile</span></a>
+    <a href="/about"       class="nav-item-custom"><div class="nav-item-icon">ℹ️</div><span class="sidebar-label">Help &amp; Support</span></a>
+    <a href="{{ url_for('logout') }}" class="nav-item-custom" style="color:#f87171 !important;">
+      <div class="nav-item-icon" style="background:rgba(239,68,68,0.15);">🚪</div>
+      <span class="sidebar-label">Logout</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-avatar">{{ session.full_name[:2] | upper }}</div>
+    <div class="sidebar-user-info"><div class="user-name">{{ session.full_name }}</div><div class="user-role">{{ session.roll_number or 'Student' }}</div></div>
+    <a href="{{ url_for('logout') }}" class="sidebar-logout"><i class="bi bi-box-arrow-right"></i></a>
+  </div>
+</aside>
+<button id="sidebarToggle" class="sidebar-toggle"><i class="bi bi-chevron-left"></i></button>
+
+<!-- Main -->
+<div id="mainContent" class="main-content">
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <button class="mobile-menu-btn"><i class="bi bi-list"></i></button>
+      <div class="page-title-area">
+        <h1 class="page-title">Track Complaints</h1>
+        <div class="page-breadcrumb"><span>Dashboard</span><span class="breadcrumb-separator">›</span><span>Track Complaints</span></div>
+      </div>
+    </div>
+    <div class="dash-navbar-right">
+      <button class="theme-toggle icon-btn"><span class="theme-icon">🌙</span></button>
+      <a href="/notifications" class="icon-btn"><i class="bi bi-bell-fill"></i><span class="notif-dot"></span></a>
+      <div class="dash-profile" onclick="window.location='/profile'">
+        <div class="dash-avatar">{{ session.full_name[:2] | upper }}</div>
+        <div class="dash-profile-info"><div class="profile-name">{{ session.full_name }}</div><div class="profile-role">{{ session.role | capitalize }}</div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-body">
+
+    <!-- Filter Bar -->
+    <div class="content-card mb-4">
+      <div class="filter-bar">
+        <div class="filter-search" style="flex:2;">
+          <i class="bi bi-search" style="color:var(--text-muted);font-size:0.85rem;"></i>
+          <input type="text" placeholder="Search by title, ID, or category..." id="trackSearch" oninput="filterTracking()"/>
+        </div>
+        <select class="filter-select" id="trackStatus" onchange="filterTracking()">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="under_review">Under Review</option>
+          <option value="in_progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select class="filter-select" id="trackPriority" onchange="filterTracking()">
+          <option value="">All Priorities</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <a href="/complaint" class="btn-primary-custom" style="white-space:nowrap;">
+          <i class="bi bi-plus-circle"></i> New Complaint
+        </a>
+      </div>
+    </div>
+
+    <!-- Complaint Cards -->
+    <div id="trackingList">
+      {% for c in complaints %}
+      <div class="tracking-card animate-on-scroll" data-status="{{ c.status }}" data-priority="{{ c.priority }}" onclick="openDetailModal({{ c.complaint_id }})">
+        <div class="tracking-card-header">
+          <div>
+            <div class="tracking-id">#{{ loop.index }} · {{ c.cat_name or 'General / Other' }}</div>
+            <div class="tracking-title fw-bold" style="font-size:1.05rem;color:var(--text-primary);">{{ c.title }}</div>
+            <div class="tracking-meta mt-1" style="font-size:0.75rem;color:var(--text-muted);">
+              📅 Submitted: {{ c.created_at[:10] if isinstance(c.created_at, str) else c.created_at.strftime('%Y-%m-%d') }} · 🏢 {{ c.dept_name or 'Administration' }} · 👤 Assigned: {{ c.assigned_name or 'Unassigned' }}
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-end gap-2">
+            <span class="badge-status badge-{{ 'progress' if c.status == 'in_progress' else ('review' if c.status == 'under_review' else c.status) }}">
+              {{ c.status.replace('_', ' ') | title }}
+            </span>
+            <span class="priority-badge priority-{{ c.priority }}">{{ c.priority | capitalize }}</span>
+          </div>
+        </div>
+
+        <!-- Dynamic Progress Track -->
+        <div class="progress-track mt-3 mb-3">
+          {% set s = c.status %}
+          
+          <!-- Step 1: Submitted -->
+          <div class="progress-step done">
+            <div class="ps-dot"><i class="bi bi-check-lg" style="font-size:0.7rem;"></i></div>
+            <div class="ps-label">Submitted</div>
+          </div>
+          
+          <!-- Step 2: Received / Pending -->
+          <div class="progress-step {{ 'active' if s == 'pending' else ('done' if s in ['under_review','in_progress','resolved','rejected'] else '') }}">
+            <div class="ps-dot">
+              {% if s == 'pending' %}
+              <i class="bi bi-clock-fill" style="font-size:0.65rem;"></i>
+              {% else %}
+              <i class="bi bi-check-lg" style="font-size:0.7rem;"></i>
+              {% endif %}
+            </div>
+            <div class="ps-label">Pending</div>
+          </div>
+          
+          <!-- Step 3: Assigned / Under Review -->
+          <div class="progress-step {{ 'active' if s == 'under_review' else ('done' if s in ['in_progress','resolved'] else '') }}">
+            <div class="ps-dot">
+              {% if s == 'under_review' %}
+              <i class="bi bi-search" style="font-size:0.65rem;"></i>
+              {% elif s in ['in_progress','resolved'] %}
+              <i class="bi bi-check-lg" style="font-size:0.7rem;"></i>
+              {% else %}
+              3
+              {% endif %}
+            </div>
+            <div class="ps-label">Under Review</div>
+          </div>
+          
+          <!-- Step 4: In Progress -->
+          <div class="progress-step {{ 'active' if s == 'in_progress' else ('done' if s == 'resolved' else '') }}">
+            <div class="ps-dot">
+              {% if s == 'in_progress' %}
+              <i class="bi bi-gear-fill" style="font-size:0.65rem;"></i>
+              {% elif s == 'resolved' %}
+              <i class="bi bi-check-lg" style="font-size:0.7rem;"></i>
+              {% else %}
+              4
+              {% endif %}
+            </div>
+            <div class="ps-label">In Progress</div>
+          </div>
+          
+          <!-- Step 5: Resolved -->
+          <div class="progress-step {{ 'done' if s == 'resolved' else ('rejected-step' if s == 'rejected' else '') }}">
+            <div class="ps-dot">
+              {% if s == 'resolved' %}
+              <i class="bi bi-check-lg" style="font-size:0.7rem;"></i>
+              {% elif s == 'rejected' %}
+              <i class="bi bi-x-lg" style="font-size:0.7rem;"></i>
+              {% else %}
+              5
+              {% endif %}
+            </div>
+            <div class="ps-label">{{ 'Rejected' if s == 'rejected' else 'Resolved' }}</div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between">
+          <p style="font-size:0.8rem;color:var(--text-secondary);margin:0;max-width:80%;">{{ c.description }}</p>
+          {% if s == 'resolved' %}
+          <button class="btn-success-custom" style="font-size:0.78rem;padding:0.4rem 1rem;white-space:nowrap;margin-left:1rem;" onclick="event.stopPropagation();giveFeedback({{ c.complaint_id }})">Rate Resolution</button>
+          {% else %}
+          <button class="btn-primary-custom" style="font-size:0.78rem;padding:0.4rem 1rem;white-space:nowrap;margin-left:1rem;" onclick="event.stopPropagation();openDetailModal({{ c.complaint_id }})">View Details</button>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <div class="p-5 text-center text-muted" style="background:var(--bg-card); border-radius:var(--radius-lg); border:1px solid var(--border-glass);">
+        <div style="font-size:3rem;margin-bottom:1rem;">📡</div>
+        <h5>No grievances to track</h5>
+        <p style="font-size:0.85rem;color:var(--text-muted);">You have not filed any campus complaints yet.</p>
+        <a href="/complaint" class="btn-primary-custom d-inline-flex mt-2">File a Grievance</a>
+      </div>
+      {% endfor %}
+    </div>
+
+  </main>
+</div>
+
+<!-- Complaint Detail Modal -->
+<div class="modal fade modal-custom" id="complaintDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header-custom d-flex align-items-center justify-content-between">
+        <div>
+          <span id="modalComplaintId" style="font-size:0.8rem;color:rgba(255,255,255,0.6);display:block;"></span>
+          <h5 class="modal-title-custom" id="modalTitle"></h5>
+        </div>
+        <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body-custom">
+        <div class="row g-3 mb-3">
+          <div class="col-6"><div class="detail-row flex-column gap-1"><div class="detail-label">Status</div><div id="modalStatus"></div></div></div>
+          <div class="col-6"><div class="detail-row flex-column gap-1"><div class="detail-label">Priority</div><div id="modalPriority"></div></div></div>
+        </div>
+        <div class="detail-row"><div class="detail-label">Category</div><div class="detail-value" id="modalCategory"></div></div>
+        <div class="detail-row"><div class="detail-label">Department</div><div class="detail-value" id="modalDepartment"></div></div>
+        <div class="detail-row"><div class="detail-label">Submitted By</div><div class="detail-value" id="modalStudent"></div></div>
+        <div class="detail-row"><div class="detail-label">Submitted On</div><div class="detail-value" id="modalDate"></div></div>
+        <div class="detail-row"><div class="detail-label">Assigned To</div><div class="detail-value" id="modalAssigned"></div></div>
+        <div class="detail-row"><div class="detail-label">Description</div><div class="detail-value" id="modalDescription" style="line-height:1.7;"></div></div>
+
+        <!-- Timeline -->
+        <div style="margin-top:1.5rem;">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">Status History</div>
+          <div class="status-timeline">
+            <div class="timeline-item">
+              <div class="timeline-icon ti-pending">📋</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Complaint Submitted</div>
+                <div class="timeline-desc">Your complaint was successfully received by the system.</div>
+                <div class="timeline-time">10 May 2025, 9:32 AM</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-icon ti-review">🔍</div>
+              <div class="timeline-content">
+                <div class="timeline-title">Under Review</div>
+                <div class="timeline-desc">IT Department received and started reviewing your complaint.</div>
+                <div class="timeline-time">10 May 2025, 11:15 AM</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-icon ti-progress">⚙️</div>
+              <div class="timeline-content">
+                <div class="timeline-title">In Progress</div>
+                <div class="timeline-desc">Assigned to Ravi Shankar. Technical inspection scheduled.</div>
+                <div class="timeline-time">10 May 2025, 2:00 PM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-custom">
+        <button type="button" class="btn-outline-custom" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal fade modal-custom" id="feedbackModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header-custom d-flex align-items-center justify-content-between">
+        <h5 class="modal-title-custom">Rate Resolution</h5>
+        <button type="button" class="btn-close btn-close-custom" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body-custom text-center">
+        <div style="font-size:3rem;margin-bottom:1rem;">⭐</div>
+        <h5 style="font-weight:700;margin-bottom:0.5rem;">How satisfied are you with the resolution?</h5>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.5rem;">Your feedback helps improve the complaint resolution process.</p>
+        <div style="display:flex;justify-content:center;gap:0.5rem;margin-bottom:1.5rem;">
+          <div id="star1" class="star-btn" onclick="selectRating(1)">⭐</div>
+          <div id="star2" class="star-btn" onclick="selectRating(2)">⭐</div>
+          <div id="star3" class="star-btn" onclick="selectRating(3)">⭐</div>
+          <div id="star4" class="star-btn" onclick="selectRating(4)">⭐</div>
+          <div id="star5" class="star-btn" onclick="selectRating(5)">⭐</div>
+        </div>
+        <textarea class="form-control-custom" rows="3" placeholder="Additional remarks (optional)..." style="padding-left:1rem;"></textarea>
+      </div>
+      <div class="modal-footer-custom">
+        <button class="btn-outline-custom" data-bs-dismiss="modal">Skip</button>
+        <button class="btn-success-custom" onclick="submitFeedback()">Submit Feedback</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.star-btn { font-size:2rem; cursor:pointer; transition:transform 0.2s; }
+.star-btn:hover { transform:scale(1.3); }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/dashboard.js"></script>
+<script>
+window.DUMMY_COMPLAINTS = {{ complaints_json | safe }};
+
+function openDetailModal(id) {
+  const data = DUMMY_COMPLAINTS.find(c => c.id === id);
+  if (!data) return;
+  const m = document.getElementById('complaintDetailModal');
+  m.querySelector('#modalComplaintId').textContent = '#' + data.id;
+  m.querySelector('#modalTitle').textContent = data.title;
+  m.querySelector('#modalStatus').innerHTML = ComplaintModal.statusBadge(data.status);
+  m.querySelector('#modalPriority').innerHTML = ComplaintModal.priorityBadge(data.priority);
+  m.querySelector('#modalCategory').textContent = data.category;
+  m.querySelector('#modalDepartment').textContent = data.dept;
+  m.querySelector('#modalStudent').textContent = data.student;
+  m.querySelector('#modalDate').textContent = data.date;
+  m.querySelector('#modalAssigned').textContent = data.assigned || 'Not yet assigned';
+  m.querySelector('#modalDescription').textContent = data.description;
+  new bootstrap.Modal(m).show();
+}
+
+function giveFeedback(id) {
+  new bootstrap.Modal(document.getElementById('feedbackModal')).show();
+}
+
+let selectedRating = 0;
+function selectRating(n) {
+  selectedRating = n;
+  for(let i = 1; i <= 5; i++) {
+    document.getElementById('star' + i).style.opacity = i <= n ? '1' : '0.3';
+  }
+}
+
+function submitFeedback() {
+  if (!selectedRating) { Toast.warning('Select Rating','Please select a star rating.'); return; }
+  Toast.success('Thank You!','Your feedback has been submitted successfully.');
+  bootstrap.Modal.getInstance(document.getElementById('feedbackModal'))?.hide();
+}
+
+function filterTracking() {
+  const search   = document.getElementById('trackSearch').value.toLowerCase();
+  const status   = document.getElementById('trackStatus').value;
+  const priority = document.getElementById('trackPriority').value;
+  document.querySelectorAll('#trackingList .tracking-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const s    = card.getAttribute('data-status');
+    const p    = card.getAttribute('data-priority');
+    card.style.display =
+      (!search || text.includes(search)) &&
+      (!status || s === status) &&
+      (!priority || p === priority) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

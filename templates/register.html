@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Student Registration - Campus Complaint Management System"/>
+  <title>Register | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏫</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+
+<div id="toastContainer" class="toast-container-custom"></div>
+
+<section class="auth-section" style="padding:5rem 1rem;">
+  <div class="auth-orb auth-orb-1"></div>
+  <div class="auth-orb auth-orb-2"></div>
+
+  <a href="/" style="position:fixed;top:20px;left:20px;display:flex;align-items:center;gap:0.5rem;color:rgba(255,255,255,0.75);font-size:0.85rem;text-decoration:none;z-index:10;">
+    <i class="bi bi-arrow-left-circle-fill" style="font-size:1.2rem;"></i> Back to Home
+  </a>
+  <button class="theme-toggle" style="position:fixed;top:20px;right:20px;z-index:10;">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <div class="auth-card" style="max-width:560px;">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🏫</div>
+      <div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text-primary);">CampusVoice</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Student Portal</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-subtitle">Join CampusVoice to file and track your campus complaints</p>
+
+    <form id="registerForm" data-validate action="/register" method="POST">
+
+      <!-- Full Name -->
+      <div class="mb-1"><label class="form-label-custom" for="fullName">Full Name</label></div>
+      <div class="input-group-custom">
+        <span class="input-icon"><i class="bi bi-person-fill"></i></span>
+        <input type="text" id="fullName" name="full_name" class="form-control-custom" placeholder="Arjun Mehta" required autocomplete="name"/>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <!-- Email -->
+          <div class="mb-1"><label class="form-label-custom" for="regEmail">Email Address</label></div>
+          <div class="input-group-custom">
+            <span class="input-icon"><i class="bi bi-envelope-fill"></i></span>
+            <input type="email" id="regEmail" name="email" class="form-control-custom" placeholder="name@student.edu" required/>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- Roll Number -->
+          <div class="mb-1"><label class="form-label-custom" for="rollNumber">Roll Number</label></div>
+          <div class="input-group-custom">
+            <span class="input-icon"><i class="bi bi-hash"></i></span>
+            <input type="text" id="rollNumber" name="roll_number" class="form-control-custom" placeholder="CS2021001" required/>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <!-- Phone -->
+          <div class="mb-1"><label class="form-label-custom" for="phone">Phone Number</label></div>
+          <div class="input-group-custom">
+            <span class="input-icon"><i class="bi bi-telephone-fill"></i></span>
+            <input type="tel" id="phone" name="phone" class="form-control-custom" placeholder="+91 9876543210"/>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!-- Department -->
+          <div class="mb-1"><label class="form-label-custom" for="department">Department</label></div>
+          <div class="input-group-custom">
+            <span class="input-icon"><i class="bi bi-building-fill"></i></span>
+            <select id="department" name="dept_id" class="form-control-custom" required style="padding-left:2.75rem;cursor:pointer;">
+              <option value="">Select Department</option>
+              <option value="1">IT &amp; Infrastructure</option>
+              <option value="2">Academic Affairs</option>
+              <option value="3">Hostel &amp; Facilities</option>
+              <option value="4">Library</option>
+              <option value="5">Sports &amp; Recreation</option>
+              <option value="6">Canteen &amp; Cafeteria</option>
+              <option value="7">Security</option>
+              <option value="9">Student</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-1"><label class="form-label-custom" for="password">Password</label></div>
+      <div class="input-group-custom">
+        <span class="input-icon"><i class="bi bi-lock-fill"></i></span>
+        <input type="password" id="password" name="password" class="form-control-custom" placeholder="Min. 8 characters" required style="padding-right:2.75rem;" autocomplete="new-password"/>
+        <span class="input-icon-right" data-toggle-pw="#password" title="Toggle">👁️</span>
+      </div>
+      <!-- Strength meter -->
+      <div class="strength-bar mb-2"><div id="strengthFill" class="strength-fill" style="width:0%"></div></div>
+      <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem;" id="strengthLabel"></div>
+
+      <!-- Confirm Password -->
+      <div class="mb-1"><label class="form-label-custom" for="confirmPw">Confirm Password</label></div>
+      <div class="input-group-custom">
+        <span class="input-icon"><i class="bi bi-shield-lock-fill"></i></span>
+        <input type="password" id="confirmPw" name="confirm_password" class="form-control-custom" placeholder="Re-enter password" required style="padding-right:2.75rem;" autocomplete="new-password"/>
+        <span class="input-icon-right" data-toggle-pw="#confirmPw" title="Toggle">👁️</span>
+      </div>
+
+      <!-- Terms -->
+      <div class="form-check form-check-custom mb-4">
+        <input class="form-check-input" type="checkbox" id="acceptTerms" required/>
+        <label class="form-check-label" for="acceptTerms" style="font-size:0.83rem;color:var(--text-secondary);">
+          I agree to the <a href="/terms" class="auth-link" target="_blank">Terms of Service</a> and <a href="/privacy" class="auth-link" target="_blank">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit" id="registerBtn" onclick="handleRegister(event)">
+        <i class="bi bi-person-check-fill"></i> Create My Account
+      </button>
+    </form>
+
+    <p class="auth-footer-text">
+      Already have an account? <a href="/login" class="auth-link">Sign In</a>
+    </p>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+<script>
+function handleRegister(e) {
+  e.preventDefault();
+  const fullName = document.getElementById('fullName').value;
+  const email = document.getElementById('regEmail').value;
+  const rollNumber = document.getElementById('rollNumber').value;
+  const phone = document.getElementById('phone').value;
+  const department = document.getElementById('department').value;
+  const pw  = document.getElementById('password').value;
+  const cpw = document.getElementById('confirmPw').value;
+
+  if (!fullName || !email || !rollNumber || !department || !pw) {
+    Toast.warning('Missing Fields', 'Please fill in all required fields.');
+    return;
+  }
+  if (!document.getElementById('acceptTerms').checked) {
+    Toast.warning('Terms Required', 'Please accept the Terms of Service to continue.');
+    return;
+  }
+  if (pw !== cpw) {
+    Toast.error('Password Mismatch', 'Passwords do not match. Please re-enter.');
+    document.getElementById('confirmPw').style.borderColor = 'var(--danger)';
+    return;
+  }
+  if (pw.length < 8) {
+    Toast.warning('Weak Password', 'Password must be at least 8 characters long.');
+    return;
+  }
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle"></span>Creating Account...';
+
+  fetch('/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      fullName: fullName,
+      email: email,
+      rollNumber: rollNumber,
+      phone: phone,
+      department: department,
+      password: pw
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      Toast.success('Account Created!', 'Welcome to CampusVoice! Redirecting to login...');
+      setTimeout(() => {
+        window.location.href = data.redirect;
+      }, 400);
+    } else {
+      Toast.error('Registration Failed', data.message || 'Error creating account.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-person-check-fill"></i> Create My Account';
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    Toast.error('Server Error', 'Failed to connect to backend.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-person-check-fill"></i> Create My Account';
+  });
+}
+
+// Confirm password live check
+document.getElementById('confirmPw')?.addEventListener('input', function() {
+  const pw = document.getElementById('password').value;
+  this.style.borderColor = this.value ? (this.value === pw ? 'var(--success)' : 'var(--danger)') : '';
+});
+</script>
+</body>
+</html>

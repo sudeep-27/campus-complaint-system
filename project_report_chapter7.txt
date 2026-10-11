@@ -1,0 +1,14 @@
+CHAPTER 7: REFERENCES
+
+7.1 BIBLIOGRAPHY AND TEXTBOOKS
+1. Garcia-Molina, H., Ullman, J. D., & Widom, J. (2008). Database Systems: The Complete Book (2nd Edition). Pearson Education. (Used for understanding relational database normalization, transaction boundaries, and foreign key integrity).
+2. Elmasri, R., & Navathe, S. B. (2015). Fundamentals of Database Systems (7th Edition). Pearson. (Used for modeling Entity-Relationship diagrams and understanding database triggers and stored procedures).
+3. Grinberg, M. (2018). Flask Web Development: Developing Web Applications with Python (2nd Edition). O'Reilly Media. (Used for building the backend Flask application routes, session management, and Jinja2 templates).
+4. Beazley, D., & Jones, B. K. (2013). Python Cookbook (3rd Edition). O'Reilly Media. (Used for implementing secure PyMySQL connection pools and parameterized database wrappers).
+
+7.2 TECHNICAL DOCUMENTATION AND ONLINE RESOURCES
+1. MySQL 8.0 Reference Manual. Oracle Corporation. Available online at https://dev.mysql.com/doc/refman/8.0/en/. (Used for checking syntax of BEFORE UPDATE triggers, BEFORE INSERT triggers, and stored procedure delimiters).
+2. Flask Documentation (Version 2.x). Pallets Projects. Available online at https://flask.palletsprojects.com/. (Used for implementing session handling, file upload limits, and JSON endpoint API responses).
+3. Bootstrap Documentation (Version 5.3). Bootstrap Core Team. Available online at https://getbootstrap.com/docs/5.3/. (Used for styling dashboard grid layouts, layout responsiveness, and modal prompts).
+4. MDN Web Docs: JavaScript (ES6+). Mozilla Developer Network. Available online at https://developer.mozilla.org/en-US/docs/Web/JavaScript. (Used for developing client-side AJAX fetch controllers, toast notifications, and donut chart animation rendering).
+5. PyMySQL Documentation (Version 1.x). PyMySQL Team. Available online at https://pymysql.readthedocs.io/. (Used for constructing connection adapters between Python/Flask and the local MySQL instance).

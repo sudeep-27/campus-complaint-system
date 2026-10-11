@@ -1,0 +1,3 @@
+4.1 INSTALLATION STEPS FOR THE EXECUTION OF THE PROJECT (SHORT)
+
+To run the Campus Complaint Management System, first ensure Python (3.8+) and MySQL are installed on your computer. Start the MySQL server (running locally on port 3306) and execute the schema.sql database script to build the campus_complaints tables, views, and triggers. Next, open a terminal window in the project folder and install the Python dependencies by running "pip install -r requirements.txt". Once the libraries are installed, start the application by running "python app.py". Finally, open your web browser and navigate to "http://127.0.0.1:5000/" to access the student and admin dashboard portals.

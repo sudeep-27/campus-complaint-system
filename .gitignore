@@ -1,0 +1,26 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.env
+
+# Flask session files
+flask_session/
+
+# SQLite local database (optional - remove if you want to include it)
+database/campus_complaints.db
+
+# Uploaded files
+static/uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/

@@ -1,0 +1,101 @@
+SAMPLE FRONTEND CODE FOR PROJECT REPORT
+
+1. HTML STRUCTURAL MARKUP (Dynamic Stats Widgets & Donut Chart Container)
+This snippet from "admin_dashboard.html" defines the dashboard metrics indicators and the container layout for the pure CSS donut chart resolution indicator.
+
+<!-- Stats Grid Row -->
+<div class="stats-grid">
+  <!-- Dynamic Stats Cards -->
+  <div class="stat-widget sw-blue">
+    <div class="stat-widget-header">
+      <div class="stat-widget-icon swi-blue"><i class="bi bi-folder2-open"></i></div>
+      <div class="stat-widget-info">
+        <h4 class="stat-widget-label">Total Complaints</h4>
+        <h2 class="stat-widget-value" id="statTotal">0</h2>
+      </div>
+    </div>
+  </div>
+  
+  <div class="stat-widget sw-orange">
+    <div class="stat-widget-header">
+      <div class="stat-widget-icon swi-orange"><i class="bi bi-clock-history"></i></div>
+      <div class="stat-widget-info">
+        <h4 class="stat-widget-label">Pending Reviews</h4>
+        <h2 class="stat-widget-value" id="statPending">0</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Resolution Rate Donut Chart Widget -->
+<div class="chart-card">
+  <h3 class="card-title">Resolution Progress</h3>
+  <div class="donut-chart-container">
+    <!-- Pure CSS Conic Gradient Donut Chart -->
+    <div class="donut-chart" id="statDonut" style="background: conic-gradient(#0d6efd 0deg, #1f2937 0deg);">
+      <div class="donut-center">
+        <h2 id="statDonutText">0%</h2>
+        <p>Resolved</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+--------------------------------------------------------------------------------
+
+2. CLIENT-SIDE INTERACTION SCRIPT (Javascript / AJAX Live Refresh)
+This snippet from "dashboard.js" defines the "DashboardStats" class, which fetches the live stats endpoint asynchronously, animates the numerical indicators, and updates the conic-gradient style of the donut chart dynamically without reloading the web page.
+
+class DashboardStats {
+  // Fetch live counts from backend API and update DOM elements
+  static refresh() {
+    fetch('/api/dashboard-stats')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const stats = data.stats;
+          
+          // 1. Animate stat numbers to new values
+          this.animateValue('statTotal', stats.total);
+          this.animateValue('statPending', stats.pending);
+          this.animateValue('statInProgress', stats.in_progress);
+          this.animateValue('statResolved', stats.resolved);
+          
+          // 2. Update CSS Conic Gradient Donut Chart
+          const donutEl = document.getElementById('statDonut');
+          const textEl = document.getElementById('statDonutText');
+          if (donutEl && textEl) {
+            const rate = data.resolution_rate || 0;
+            const degrees = (rate / 100) * 360;
+            
+            // Re-render CSS background style dynamically
+            donutEl.style.background = `conic-gradient(#10b981 ${degrees}deg, #1f2937 ${degrees}deg)`;
+            textEl.textContent = `${rate}%`;
+          }
+        }
+      })
+      .catch(error => console.error('Error loading live dashboard stats:', error));
+  }
+
+  // Smooth integer counter animation
+  static animateValue(id, targetValue) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const startValue = parseInt(el.textContent) || 0;
+    if (startValue === targetValue) return;
+    
+    const duration = 800; // Animation duration in milliseconds
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const currentValue = Math.floor(startValue + progress * (targetValue - startValue));
+      el.textContent = currentValue;
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+    requestAnimationFrame(update);
+  }
+}

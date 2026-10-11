@@ -1,0 +1,74 @@
+CHAPTER 2: SYSTEM REQUIREMENTS AND ARCHITECTURE
+
+2.1 SYSTEM REQUIREMENTS
+
+To ensure the successful deployment, execution, and testing of the Campus Complaint Management System, the environment must meet specific minimum hardware and software standards. The system is designed to be lightweight, allowing it to run efficiently on standard consumer-grade computers.
+
+2.1.1 Hardware Requirements
+
+Development & Server Environment (Minimum Specs):
+- Processor (CPU): Intel Core i3 (or AMD equivalent), 2.0 GHz or higher.
+- Random Access Memory (RAM): 4 GB (8 GB recommended for smoother multitasking with MySQL and Flask running concurrently).
+- Storage (Hard Drive): 500 MB of available disk space (for application source code, local SQLite backup database, uploaded attachment storage, and dependencies).
+- Network Interface: Standard Ethernet or Wi-Fi adapter (for local network hosting and API communication).
+
+Client Device (Student/Admin Browser Specs):
+- Device: Any modern smartphone, tablet, laptop, or desktop computer.
+- Memory: 2 GB RAM minimum.
+- Display Resolution: Minimum 1024x768 (highly responsive layout adjusts dynamically down to 320px mobile displays).
+
+--------------------------------------------------------------------------------
+
+2.1.2 Software Requirements
+
+Backend Environment:
+- Operating System: Windows 10/11, macOS, or Linux (Ubuntu 20.04 LTS or later).
+- Programming Language: Python (Version 3.8 or higher).
+- Web Framework: Flask (Version 2.x or higher) with Flask-Session for state handling.
+- Database Management System (DBMS): 
+  * MySQL Community Server (Version 8.0.x) as the primary database server.
+  * SQLite (Version 3.x) built-in fallback database engine.
+- Libraries and Dependencies: PyMySQL (for MySQL connection), bcrypt (for secure password encryption), python-dotenv (for environment variable configuration).
+
+Frontend Environment:
+- Mark-up Languages: HTML5 (Hypertext Markup Language) and CSS3 (Cascading Style Sheets).
+- CSS Framework: Bootstrap (Version 5.3.x) with Bootstrap Icons.
+- Scripting Language: Vanilla JavaScript (ECMAScript 6+).
+- Supported Browsers: Google Chrome (version 90+), Mozilla Firefox (version 88+), Microsoft Edge (version 90+), or Apple Safari (version 14+).
+
+Development Tools:
+- Integrated Development Environment (IDE): Visual Studio Code, PyCharm, or any standard text editor.
+- Database Client: MySQL Command Line Client, MySQL Workbench, or phpMyAdmin.
+- Package Manager: pip (Python Package Installer).
+
+--------------------------------------------------------------------------------
+
+2.2 FRONTEND ARCHITECTURE
+
+The frontend interface of the Campus Complaint Management System focuses on responsiveness, clean visual hierarchy, and real-time interaction. It is designed using a modern "glassmorphism" aesthetic characterized by dark gradient layouts, semi-transparent panels, and subtle border highlights.
+
+The frontend is divided into three key elements:
+
+1. Structure (HTML5): The document structure relies on clean, semantic HTML5 elements (like <header>, <main>, <section>, and <footer>) which ensure accessibility and logical grouping of sections. Forms utilize Bootstrap validation utilities to check for missing inputs before submissions.
+2. Presentation (CSS3 & Bootstrap 5): Styling is controlled via a custom stylesheet integrated with Bootstrap 5. Layout positioning is built with Bootstrap's flexible 12-column grid system, making the dashboards fully responsive across desktop monitors, tablets, and smartphones. A key visual component is the CSS Donut Chart representing the campus-wide complaint resolution rate. It uses a pure CSS conic-gradient background combined with dynamic percentages calculated by JavaScript, removing the need for heavy third-party graphing libraries.
+3. Client-Side Interactivity (JavaScript/AJAX): Scripting is powered by vanilla JavaScript (ES6+). It utilizes the native browser fetch() API to make asynchronous (AJAX) requests to backend endpoints (such as updating statuses, deleting complaints, and loading statistics). 
+
+When an action occurs (e.g., deleting a row), JavaScript updates the Document Object Model (DOM) directly:
+- The corresponding table row is faded out and removed.
+- The dashboard stat numbers animate from their old value to the new value.
+- The CSS Donut Chart recalculates its conic-gradient values and updates the legend dynamically.
+- Toast notification pop-ups appear on the screen to confirm actions (e.g., "Status Updated Successfully") without forcing a full page reload.
+
+--------------------------------------------------------------------------------
+
+2.3 BACKEND ARCHITECTURE
+
+The backend of the application acts as the coordinator between frontend user actions and database transactions. It is engineered using Python and the Flask micro-framework, which handles request routing, templates, and server configurations.
+
+The backend architecture consists of these critical services:
+
+1. Routing and View Controllers: Flask maps incoming URLs to specific Python execution functions. It serves HTML templates using the Jinja2 Template Engine, allowing the server to inject dynamic database values (such as complaint descriptions or user profile names) into the static HTML layout before it is sent to the client browser.
+2. Session and Access Management: Since HTTP is stateless, the backend implements session tracking via Flask-Session. When a user logs in, their user_id, role, and registration state are stored securely in a server-side session cookie. Before any page loads or an API runs, a middleware checker verifies if the user is authenticated and possesses the correct role (Student, Staff, or Admin) to prevent unauthorized access.
+3. Cryptographic Security: Passwords are never stored in plain text. When a student registers, their password is processed using the Bcrypt library, which salts and hashes the string. During login, Bcrypt compares the input password against the stored database hash, keeping credentials secure against SQL leaks.
+4. Database Connection Management: Database operations are handled using a custom connection manager built with PyMySQL. It connects to the MySQL server running on localhost:3306. 
+5. Self-Healing Fallback Mechanism: To prevent the application from crashing if the local MySQL database server goes offline, a dual-layer fallback service is written into the backend initialization. If a MySQL connection fails, the application automatically redirects all transactions to a local SQLite database file (campus_complaints.db). When the database connection switches, it operates seamlessly without user interruption.

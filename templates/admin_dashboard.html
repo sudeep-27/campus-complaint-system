@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/dashboard.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+</head>
+<body>
+<div id="toastContainer" class="toast-container-custom"></div>
+
+<!-- Sidebar Overlay (mobile) -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SIDEBAR (Admin Mode)
+════════════════════════════════════════════════════════════ -->
+<aside id="sidebar" class="sidebar">
+  <!-- Brand -->
+  <div class="sidebar-logo">
+    <div class="sidebar-icon-box">🛡️</div>
+    <div class="sidebar-brand-text">
+      <span class="brand-name">CampusVoice</span>
+      <span class="brand-sub">Admin Control</span>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="sidebar-nav">
+    <p class="sidebar-section-title">Operations</p>
+
+    <a href="/admin_dashboard" class="nav-item-custom active">
+      <div class="nav-item-icon">🏠</div>
+      <span class="sidebar-label">Dashboard</span>
+    </a>
+    <a href="/notifications" class="nav-item-custom">
+      <div class="nav-item-icon">🔔</div>
+      <span class="sidebar-label">Notifications</span>
+    </a>
+
+    <p class="sidebar-section-title">Settings</p>
+    <a href="/profile" class="nav-item-custom">
+      <div class="nav-item-icon">👤</div>
+      <span class="sidebar-label">My Profile</span>
+    </a>
+    <a href="/about" class="nav-item-custom">
+      <div class="nav-item-icon">ℹ️</div>
+      <span class="sidebar-label">Help &amp; Support</span>
+    </a>
+    <a href="{{ url_for('logout') }}" class="nav-item-custom" style="color:#f87171 !important;">
+      <div class="nav-item-icon" style="background:rgba(239,68,68,0.15);">🚪</div>
+      <span class="sidebar-label">Logout</span>
+    </a>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <div class="sidebar-avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">{{ session.full_name[:2] | upper }}</div>
+    <div class="sidebar-user-info">
+      <div class="user-name">{{ session.full_name }}</div>
+      <div class="user-role">{{ session.role | capitalize }}</div>
+    </div>
+    <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Logout"><i class="bi bi-box-arrow-right"></i></a>
+  </div>
+</aside>
+
+<!-- Sidebar Toggle -->
+<button id="sidebarToggle" class="sidebar-toggle" title="Toggle sidebar"><i class="bi bi-chevron-left"></i></button>
+
+<!-- ════════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<div id="mainContent" class="main-content">
+
+  <!-- Top Navbar -->
+  <header class="dash-navbar">
+    <div class="dash-navbar-left">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="page-title-area">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <div class="page-breadcrumb">
+          <span>Control Panel</span><span class="breadcrumb-separator">›</span><span>Dashboard</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-search">
+      <i class="bi bi-search" style="color:var(--text-muted);font-size:0.85rem;"></i>
+      <input type="text" id="topbarSearch" placeholder="Search complaints..." oninput="document.getElementById('tableSearch').value = this.value; document.getElementById('tableSearch').dispatchEvent(new Event('input'));"/>
+    </div>
+
+    <div class="dash-navbar-right">
+      <button class="theme-toggle icon-btn">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <a href="/notifications" class="icon-btn" title="Notifications">
+        <i class="bi bi-bell-fill"></i>
+        <span class="notif-dot"></span>
+      </a>
+      <div class="dash-profile" onclick="window.location='/profile'">
+        <div class="dash-avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">{{ session.full_name[:2] | upper }}</div>
+        <div class="dash-profile-info">
+          <div class="profile-name">{{ session.full_name }}</div>
+          <div class="profile-role">Super Admin</div>
+        </div>
+        <i class="bi bi-chevron-down" style="font-size:0.7rem;color:var(--text-muted);"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Dash Body -->
+  <main class="dash-body">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner mb-4" style="background:linear-gradient(135deg,#7c3aed,#4f46e5,#6366f1);">
+      <div class="row align-items-center g-3">
+        <div class="col-md-8">
+          <div class="welcome-text">
+            <span class="greeting">Security Clearance Granted 🔑</span>
+            <div class="name">System Admin Dashboard</div>
+            <div class="sub">Overseeing Grievances, Audits, Resolution Timelines &amp; Staff Assignments.</div>
+          </div>
+          <div class="welcome-actions">
+            <button onclick="Toast.info('Audit Logs', 'Exporting current monthly grievance report...')" class="btn-welcome-primary" style="color:#7c3aed;">
+              <i class="bi bi-file-earmark-pdf-fill"></i> Export Grievance Report
+            </button>
+          </div>
+        </div>
+        <div class="col-md-4 text-end d-none d-md-block">
+          <div style="font-size:5rem;opacity:0.25;">🛡️</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-widget sw-blue">
+        <div class="stat-widget-header">
+          <div class="stat-widget-icon swi-blue"><i class="bi bi-folder-fill"></i></div>
+          <span class="stat-trend trend-up" id="statHeaderTotal">↑ {{ total }} total</span>
+        </div>
+        <span class="stat-widget-value" id="statTotal" data-counter="{{ total }}">0</span>
+        <span class="stat-widget-label">Total Grievances</span>
+        <div class="stat-widget-bar"><div class="stat-widget-bar-fill" style="background:#2563eb;" data-width="100%"></div></div>
+      </div>
+
+      <div class="stat-widget sw-green">
+        <div class="stat-widget-header">
+          <div class="stat-widget-icon swi-green"><i class="bi bi-check-circle-fill"></i></div>
+          <span class="stat-trend trend-up">↑ Resolved</span>
+        </div>
+        <span class="stat-widget-value" id="statResolved" data-counter="{{ resolved }}">0</span>
+        <span class="stat-widget-label">Resolved</span>
+        <div class="stat-widget-bar"><div class="stat-widget-bar-fill" style="background:#10b981;" data-width="100%"></div></div>
+      </div>
+
+      <div class="stat-widget sw-orange">
+        <div class="stat-widget-header">
+          <div class="stat-widget-icon swi-orange"><i class="bi bi-clock-fill"></i></div>
+          <span class="stat-trend trend-same">→ Active</span>
+        </div>
+        <span class="stat-widget-value" id="statPending" data-counter="{{ pending }}">0</span>
+        <span class="stat-widget-label">Pending</span>
+        <div class="stat-widget-bar"><div class="stat-widget-bar-fill" style="background:#f59e0b;" data-width="100%"></div></div>
+      </div>
+
+      <div class="stat-widget sw-purple">
+        <div class="stat-widget-header">
+          <div class="stat-widget-icon swi-purple"><i class="bi bi-lightning-fill"></i></div>
+          <span class="stat-trend trend-up">↑ Active</span>
+        </div>
+        <span class="stat-widget-value" id="statInProgress" data-counter="{{ in_progress }}">0</span>
+        <span class="stat-widget-label">In Progress</span>
+        <div class="stat-widget-bar"><div class="stat-widget-bar-fill" style="background:#6366f1;" data-width="100%"></div></div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="dash-grid">
+      <!-- Complaints Table -->
+      <div class="content-card">
+        <div class="card-header-custom">
+          <div class="card-title-custom">
+            <div class="card-title-icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;">📋</div>
+            All Grievances Management
+          </div>
+        </div>
+
+        <!-- Filter Grid -->
+        <div class="p-3 border-bottom border-black border-opacity-5" style="background:rgba(0,0,0,0.01);">
+          <div class="row g-2">
+            <div class="col-12 col-md-3">
+              <input type="text" id="tableSearch" class="form-control form-control-sm" placeholder="Search keyword..." style="background:var(--bg); border:1px solid var(--border-glass); color:var(--text-primary); font-size:0.8rem;"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <select id="filterStatus" class="form-select form-select-sm" style="background:var(--bg); border:1px solid var(--border-glass); color:var(--text-primary); font-size:0.8rem;">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="under_review">Under Review</option>
+                <option value="in_progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <select id="filterPriority" class="form-select form-select-sm" style="background:var(--bg); border:1px solid var(--border-glass); color:var(--text-primary); font-size:0.8rem;">
+                <option value="">All Priorities</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-3">
+              <select id="filterDept" class="form-select form-select-sm" style="background:var(--bg); border:1px solid var(--border-glass); color:var(--text-primary); font-size:0.8rem;">
+                <option value="">All Departments</option>
+                <option value="IT & Infrastructure">IT &amp; Infrastructure</option>
+                <option value="Hostel & Facilities">Hostel &amp; Facilities</option>
+                <option value="Academic Affairs">Academic Affairs</option>
+                <option value="Library">Library</option>
+                <option value="Security">Security</option>
+                <option value="Administration">Administration</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table" id="complaintsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Grievance Title</th>
+                <th>Student</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Assigned Staff</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in complaints %}
+              <tr data-id="{{ c.complaint_id }}" data-status="{{ c.status }}" data-priority="{{ c.priority }}" data-dept="{{ c.dept_name or 'Administration' }}">
+                <td><span class="complaint-id-badge">#{{ loop.index }}</span></td>
+                <td><div style="font-weight:600;font-size:0.82rem;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ c.title }}</div></td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-mini-avatar">{{ (c.student_name or 'An')[:2] | upper }}</div>
+                    <div>
+                      <div class="user-cell-name">{{ c.student_name if not c.is_anonymous else 'Anonymous Student' }}</div>
+                      <div class="user-cell-email">{{ c.student_email if not c.is_anonymous else 'Anonymous' }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="priority-badge priority-{{ c.priority }}">{{ c.priority | capitalize }}</span></td>
+                <td class="status-cell">
+                  <span class="badge-status badge-{{ 'progress' if c.status == 'in_progress' else ('review' if c.status == 'under_review' else c.status) }}">
+                    {{ c.status.replace('_', ' ') | title }}
+                  </span>
+                </td>
+                <td><span style="font-size:0.78rem;font-weight:500;">{{ c.assigned_name or 'Unassigned' }}</span></td>
+                <td><span style="font-size:0.75rem;color:var(--text-muted);">{{ c.created_at[:10] if isinstance(c.created_at, str) else c.created_at.strftime('%d %b') }}</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button onclick="ComplaintModal.open({{ c.complaint_id }})" class="action-btn ab-view" title="Details"><i class="bi bi-eye-fill"></i></button>
+                    <button onclick="StatusModal.open({{ c.complaint_id }})" class="action-btn ab-edit" title="Update Status"><i class="bi bi-pencil-square"></i></button>
+                    <button onclick="AssignModal.open({{ c.complaint_id }})" class="action-btn ab-resolve" title="Assign Staff"><i class="bi bi-person-fill-add"></i></button>
+                    <button onclick="DeleteConfirm.confirm({{ c.complaint_id }})" class="action-btn ab-delete" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                  </div>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">No campus grievances reported yet.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Pagination -->
+        <div class="p-3 border-top border-black border-opacity-5">
+          <div id="tablePagination" class="pagination-wrapper d-flex align-items-center justify-content-between flex-wrap gap-2"></div>
+        </div>
+
+      </div>
+
+      <!-- Right Panel -->
+      <div class="d-flex flex-column gap-3">
+
+        <!-- Resolution Rate -->
+        <div class="content-card">
+          <div class="card-header-custom">
+            <div class="card-title-custom">
+              <div class="card-title-icon" style="background:rgba(6,182,212,0.1);color:var(--info);">📊</div>
+              Grievance Metrics
+            </div>
+          </div>
+          <div class="card-body-custom">
+            {% set rate = ((resolved / total * 100) | round | int) if total > 0 else 0 %}
+            {% set prog = ((in_progress / total * 100) | round | int) if total > 0 else 0 %}
+            {% set pend = ((pending / total * 100) | round | int) if total > 0 else 0 %}
+            <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem;">
+              <div id="donutChart" class="donut-chart" style="background:conic-gradient(var(--success) 0% {{ rate }}%, var(--primary-light) {{ rate }}% {{ rate + prog }}%, var(--warning) {{ rate + prog }}% {{ rate + prog + pend }}%, var(--danger) {{ rate + prog + pend }}% 100%);">
+                <div class="donut-hole">
+                  <span id="donutValue" class="donut-value">{{ rate }}%</span>
+                  <span class="donut-label">Resolved</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-legend">
+              <div id="legendResolved" class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Resolved ({{ resolved }})</div>
+              <div id="legendInProgress" class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>In Progress ({{ in_progress }})</div>
+              <div id="legendPending" class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Pending ({{ pending }})</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Quick Actions -->
+        <div class="content-card">
+          <div class="card-header-custom">
+            <div class="card-title-custom">
+              <div class="card-title-icon" style="background:rgba(124,58,237,0.1);color:#7c3aed;">⚡</div>
+              Quick Actions
+            </div>
+          </div>
+          <div class="card-body-custom p-0">
+            <div class="list-group list-group-flush border-0">
+              <button onclick="Toast.success('Database Backup', 'System backup triggered successfully! Generated file: cv_backup_2026.sql')" class="list-group-item list-group-item-action border-0 px-4 py-3" style="font-size:0.85rem;color:var(--text-primary);background:transparent;">
+                💾 Full System Backup
+              </button>
+              <button onclick="Toast.info('Audit Logs', 'Opening audit logging activity window...')" class="list-group-item list-group-item-action border-0 px-4 py-3" style="font-size:0.85rem;color:var(--text-primary);background:transparent;">
+                🔍 View Audit Trail Logs
+              </button>
+              <button onclick="Toast.warning('Security Notice', 'Syncing departments with database tables...')" class="list-group-item list-group-item-action border-0 px-4 py-3" style="font-size:0.85rem;color:var(--text-primary);background:transparent;">
+                🔄 Sync Department Routing
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════════════════════ -->
+
+<!-- Complaint Detail Modal -->
+<div class="modal fade modal-custom" id="complaintDetailModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:var(--radius-lg); color:var(--text-primary);">
+      <div class="modal-header border-bottom border-black border-opacity-10">
+        <h5 class="modal-title font-heading fw-bold">Grievance Details <span id="modalComplaintId" class="complaint-id-badge ms-2"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h4 id="modalTitle" class="fw-bold mb-3" style="color:var(--primary-light);"></h4>
+        
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Status</div>
+            <div id="modalStatus" class="mt-1"></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Priority</div>
+            <div id="modalPriority" class="mt-1"></div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Category</div>
+            <div id="modalCategory" class="fw-semibold mt-1"></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Department</div>
+            <div id="modalDepartment" class="fw-semibold mt-1"></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Submitted By</div>
+            <div id="modalStudent" class="fw-semibold mt-1"></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Assigned Staff</div>
+            <div id="modalAssigned" class="fw-semibold mt-1"></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;">Submission Date</div>
+            <div id="modalDate" class="fw-semibold mt-1" style="color:var(--text-muted);"></div>
+          </div>
+        </div>
+
+        <hr class="opacity-10"/>
+        <h6 class="fw-bold mb-2" style="font-size:0.85rem;text-transform:uppercase;color:var(--text-muted);">Description</h6>
+        <p id="modalDescription" style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;white-space:pre-line;"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Status Modal -->
+<div class="modal fade modal-custom" id="updateStatusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:var(--radius-lg); color:var(--text-primary);">
+      <div class="modal-header border-bottom border-black border-opacity-10">
+        <h5 class="modal-title font-heading fw-bold">Update Status <span id="statusComplaintId" class="complaint-id-badge ms-2"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="event.preventDefault(); StatusModal.submit();">
+          <div class="mb-3">
+            <label for="newStatus" class="form-label-custom mb-1" style="color:var(--text-primary);">Choose Status</label>
+            <select id="newStatus" class="form-select" style="background:var(--bg); color:var(--text-primary); border-color:var(--border-glass);" required>
+              <option value="" disabled selected>Select status</option>
+              <option value="pending">Pending</option>
+              <option value="under_review">Under Review</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label for="statusRemark" class="form-label-custom mb-1" style="color:var(--text-primary);">Remarks / Details</label>
+            <textarea id="statusRemark" class="form-control" rows="3" placeholder="Describe actions taken or resolution remarks..." style="background:var(--bg); color:var(--text-primary); border-color:var(--border-glass);" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="background:var(--gradient-primary); border:none; padding:0.6rem; border-radius:var(--radius-md); font-weight:600;">Update Status</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Assign Staff Modal -->
+<div class="modal fade modal-custom" id="assignStaffModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:var(--bg-card); backdrop-filter:blur(20px); border:1px solid var(--border-glass); border-radius:var(--radius-lg); color:var(--text-primary);">
+      <div class="modal-header border-bottom border-black border-opacity-10">
+        <h5 class="modal-title font-heading fw-bold">Assign Staff <span id="assignComplaintId" class="complaint-id-badge ms-2"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="event.preventDefault(); AssignModal.submit();">
+          <div class="mb-4">
+            <label for="assignStaff" class="form-label-custom mb-1" style="color:var(--text-primary);">Select Staff Officer</label>
+            <select id="assignStaff" class="form-select" style="background:var(--bg); color:var(--text-primary); border-color:var(--border-glass);" required>
+              <option value="" disabled selected>Choose staff member...</option>
+              <option value="Ravi Shankar">Ravi Shankar (IT &amp; Systems Specialist)</option>
+              <option value="Ms. Priya Nair">Ms. Priya Nair (Librarian in Charge)</option>
+              <option value="Dr. Kavya Menon">Dr. Kavya Menon (Administrative Officer)</option>
+              <option value="Prof. Sunita Sharma">Prof. Sunita Sharma (Academic Affairs Registrar)</option>
+              <option value="Mr. Anil Verma">Mr. Anil Verma (Hostel Warden)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="background:var(--gradient-primary); border:none; padding:0.6rem; border-radius:var(--radius-md); font-weight:600;">Assign Officer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/dashboard.js"></script>
+<script>
+window.DUMMY_COMPLAINTS = {{ complaints_json | safe }};
+</script>
+</body>
+</html>

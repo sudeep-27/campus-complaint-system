@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ccms_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Terms of Service - Campus Complaint Management System"/>
+  <title>Terms of Service | CampusVoice</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/responsive.css"/>
+  <style>
+    .legal-content {
+      max-height: 400px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .legal-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .legal-content::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .legal-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    .legal-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .legal-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .legal-section-title:first-child {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div id="toastContainer" class="toast-container-custom"></div>
+
+<section class="auth-section" style="padding: 4rem 1rem;">
+  <div class="auth-orb auth-orb-1"></div>
+  <div class="auth-orb auth-orb-2"></div>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" style="position:fixed;top:20px;right:20px;z-index:10;">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <div class="auth-card" style="max-width: 680px;">
+    <!-- Logo -->
+    <div class="auth-logo mb-4">
+      <div class="auth-logo-icon">📜</div>
+      <div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--text-primary);">CampusVoice</div>
+        <div style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Grievance Portal Rules</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">Terms of Service</h1>
+    <p class="auth-subtitle mb-4">Please read the terms and rules of using our digital complaint management system.</p>
+
+    <!-- Content Block -->
+    <div class="legal-content mb-4">
+      <div class="legal-section-title">1. Acceptance of Terms</div>
+      <p>By creating an account or accessing the Campus Complaint Management System (CampusVoice), you agree to be bound by these Terms of Service. These terms constitute a legally binding agreement between you, as a student, faculty member, or admin officer, and the university administration.</p>
+
+      <div class="legal-section-title">2. Authorized Use & Integrity</div>
+      <p>This portal is intended solely for filing genuine grievances, feedback, and support inquiries related to campus facilities, operations, academics, and services. You agree to provide only truthful, accurate, and complete information. Filing false, malicious, fraudulent, or deliberately misleading complaints is strictly prohibited and will be escalated to the disciplinary committee.</p>
+
+      <div class="legal-section-title">3. Account Security</div>
+      <p>You are responsible for safeguarding the credentials of your account. You agree not to disclose your login email or password to any third party. Any actions taken under your account will be considered your responsibility.</p>
+
+      <div class="legal-section-title">4. Respectful Communication</div>
+      <p>All descriptions, attachments, and comments submitted through this portal must adhere to professional campus guidelines. Obscene, defamatory, abusive, threatening, or harassing language directed at administrators, departments, faculty, or other students will result in immediate suspension of account privileges and appropriate administrative actions.</p>
+
+      <div class="legal-section-title">5. Anonymous Filings</div>
+      <p>Filing complaints anonymously is permitted for safety and sensitivity. However, anonymous submissions remain subject to system audit logs, and the super administrator maintains administrative tools to resolve disputes, investigate abuse, or take action against malicious behavior.</p>
+
+      <div class="legal-section-title">6. Service Modifications</div>
+      <p>The university reserves the right to modify, suspend, or update features of the CampusVoice portal at any time to improve efficiency, system security, or align with university guidelines.</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center">
+      <button onclick="window.close();" class="btn-submit" style="width: auto; padding: 0.75rem 2.5rem;">
+        <i class="bi bi-check-circle-fill"></i> I Understand &amp; Close Tab
+      </button>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/main.js"></script>
+</body>
+</html>
