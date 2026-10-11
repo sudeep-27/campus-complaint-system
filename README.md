@@ -97,3 +97,5 @@ campus-complaint-system/
 
 ## 👨‍💻 Developed By
 Sudeep | DBMS Mini Project | 2026
+
+Project maintained by Sudeep.
